@@ -1,4 +1,4 @@
-import {Box, Button, VStack} from "@chakra-ui/react";
+import {Box, Button, Flex, VStack} from "@chakra-ui/react";
 import {RedPacket} from "../components/RedPacket";
 import React from "react";
 import {ActiveRedPacketViews} from "../components/ActiveRedPacketViews";
@@ -9,6 +9,9 @@ export const LinkdropPage: React.FC = () => {
   const {isSignedIn} = useWalletSignedInStore()
   return (
     <VStack spacing={10} marginTop={20} paddingBottom={20}>
+      <Box color={'pink.300'} fontWeight={'bold'}>
+        🎉 Create Red Packet and share with your friends 🎉
+      </Box>
       <Box
         paddingTop={10}
         paddingBottom={5}
