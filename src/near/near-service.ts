@@ -1,13 +1,10 @@
-import {Near, keyStores, WalletConnection, Contract} from "near-api-js";
+import {Near, keyStores} from "near-api-js";
 import {MultiActionWalletConnection} from "./multi-action-wallet";
 import {RedPacketContract} from "./red-packet-contract";
-import {getNearConfig} from "../config/near-config";
-import {getRedPacketContractConfig} from "../config/contract-config";
-import {getWalletConfig} from "../config/wallet-config";
+import {nearConfig} from "../config/near-config";
+import {redPacketContractConfig} from "../config/contract-config";
+import {walletConfig} from "../config/wallet-config";
 
-const redPacketContractConfig = getRedPacketContractConfig();
-const nearConfig = getNearConfig();
-const walletConfig = getWalletConfig();
 
 export interface NearService {
   keyStore: keyStores.BrowserLocalStorageKeyStore,

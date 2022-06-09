@@ -1,10 +1,12 @@
 import React from "react";
-import {Box, Center, Link, Text, VStack} from "@chakra-ui/react";
+import {Flex, Image} from "@chakra-ui/react";
+import nearLogo from "../assets/near-logo.svg"
 
 export const Footer: React.FC = () => {
   return (
-    <Box>
-
-    </Box>
+    <Flex justify={'center'} alignItems={"center"} gap={2} fontSize={'lg'} fontWeight={'bold'}>
+      Powered by
+      <Image src={nearLogo} width={'5em'}/>
+    </Flex>
   )
 }

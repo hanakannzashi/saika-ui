@@ -2,24 +2,24 @@ import {useNearServiceStore} from "../stores/global-stores";
 import {useCallback, useEffect, useState} from "react";
 import {RedPacketView} from "../near/red-packet-contract";
 
-export const useRedPacketView = (publicKey: string) => {
+export const useRedPacketView = (publicKey?: string) => {
   const {nearService} = useNearServiceStore()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isErr, setIsErr] = useState<boolean>(false)
   const [view, setView] = useState<RedPacketView | null>(null)
-  const [reflushCount, setReflushCount] = useState<number>(0)
+  const [refreshCount, setReflushCount] = useState<number>(0)
 
-  const onReflush = useCallback(() => {
+  const onRefresh = useCallback(() => {
     setIsLoading(true)
     setIsErr(false)
     setView(null)
-    setReflushCount((oldReflushCount) => {
-      return oldReflushCount + 1
+    setReflushCount((oldRefreshCount) => {
+      return oldRefreshCount + 1
     })
   }, [])
 
   useEffect(() => {
-    if (!nearService) {
+    if (!nearService || !publicKey) {
       return
     }
     nearService.redPacketContract.get_red_packet_by_pk({
@@ -33,7 +33,7 @@ export const useRedPacketView = (publicKey: string) => {
         setIsErr(true)
         console.error('fetch red packet view error: ' + err)
       })
-  }, [nearService, publicKey, reflushCount])
+  }, [nearService, publicKey, refreshCount])
 
-  return {isLoading, isErr, view, reflushCount, onReflush}
+  return {isLoading, isErr, view, refreshCount, onRefresh}
 }

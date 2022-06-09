@@ -1,14 +1,10 @@
-import {Claim} from "../components/Claim";
+import {ClaimRedPacket} from "../components/Claim";
 import React, {useMemo} from "react";
-import {useNearServiceStore} from "../stores/global-stores";
 import {useParams} from "react-router-dom";
 import {fromBase64} from "js-base64";
 import {KeyPair} from "near-api-js";
-import {getTokenIdList} from "../config/token-config";
-import {Box ,VStack} from "@chakra-ui/react";
+import {Flex, Text, VStack} from "@chakra-ui/react";
 
-
-const tokenIdList = getTokenIdList()
 
 export interface ClaimParams {
   ownerId: string,
@@ -37,22 +33,29 @@ export const ClaimPage: React.FC = () => {
   }, [base64Params])
 
   return (
-    <VStack gap={4}>
-      <Box
-        minWidth={250}
+    <VStack minHeight={600}>
+      <Flex
         borderRadius={20}
-        paddingTop={10}
-        marginTop={20}
-        backgroundColor={'whiteAlpha.800'}
+        padding={10}
+        marginTop={10}
+        minWidth={300}
+        maxWidth={300}
+        backgroundColor={'whiteAlpha.700'}
         shadow={'base'}
+        justify={'center'}
       >
-        <Claim
-          tokenIdList={tokenIdList}
-          ownerId={claimParams!.ownerId}
-          privateKey={claimParams!.privateKey}
-          publicKey={claimParams!.publicKey}
-        />
-      </Box>
+        {
+          claimParams ?
+            <ClaimRedPacket
+              ownerId={claimParams.ownerId}
+              privateKey={claimParams.privateKey}
+              publicKey={claimParams.publicKey}
+            /> :
+            <Text fontWeight={'bold'} fontSize={'lg'}>
+              Invalid Red Packet Link ⚠️
+            </Text>
+        }
+      </Flex>
     </VStack>
   )
 }

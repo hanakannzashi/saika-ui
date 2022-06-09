@@ -1,6 +1,8 @@
 import {NETWORK_ID} from "./common-config";
 
-export function getRedPacketContractConfig() {
+export const redPacketContractConfig = getRedPacketContractConfig()
+
+function getRedPacketContractConfig() {
   const methods = {
     viewMethods: [
       'storage_balance_of',
@@ -36,3 +38,4 @@ export function getRedPacketContractConfig() {
     default: throw new Error(`network id '${NETWORK_ID}' is invalid`)
   }
 }
+

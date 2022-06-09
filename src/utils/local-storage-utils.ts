@@ -4,7 +4,12 @@ export class LocalStorageUtils {
     if(json === null) {
       return null
     }
-    return JSON.parse(json)
+    try {
+      return JSON.parse(json)
+    } catch (err) {
+      console.error(err)
+      return null
+    }
   }
 
   static setValue(key: string, value: any) {

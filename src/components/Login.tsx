@@ -1,11 +1,9 @@
 import React, {useEffect} from "react";
-import {Avatar, Box, Button, Flex, Menu, MenuButton, MenuList, MenuItem, Text, Image, Spacer} from "@chakra-ui/react";
+import {Avatar, Button, Menu, MenuButton, MenuList, MenuItem, Text, Box, Center} from "@chakra-ui/react";
 import {useNearServiceStore, useWalletSignedInStore} from "../stores/global-stores";
-import {getWalletConfig} from "../config/wallet-config";
+import {walletConfig} from "../config/wallet-config";
 import accountIcon from "../assets/account-icon.svg"
 
-
-const {signInOptions} = getWalletConfig()
 
 export const Login: React.FC = () => {
   const {nearService} = useNearServiceStore()
@@ -20,7 +18,7 @@ export const Login: React.FC = () => {
 
   const signIn = async () => {
     await nearService!.wallet.requestSignIn(
-      signInOptions
+      walletConfig.signInOptions
     )
   }
 
@@ -30,59 +28,63 @@ export const Login: React.FC = () => {
   }
 
   return (
-    !isSignedIn ?
-      <Button
-        borderRadius={20}
-        fontWeight={'bold'}
-        fontSize={'sm'}
-        color={'#c2cfe4'}
-        backgroundColor={'whiteAlpha.800'}
-        onClick={signIn}
-      >
-        Sign in with NEAR
-      </Button>
-      :
-      <Menu>
-        <MenuButton
-          as={Button}
-          borderRadius={20}
-          backgroundColor={'whiteAlpha.800'}
-          _hover={{backgroundColor: ''}}
-          _active={{backgroundColor: ''}}
-          leftIcon={<Avatar marginLeft={-5} src={accountIcon} size={'md'} padding={'0.5em'} backgroundColor={'whiteAlpha.500'}/>}
-        >
-          <Text
+    <Box height={'max'}>
+      {
+        !isSignedIn ?
+          <Button
+            borderRadius={50}
             fontWeight={'bold'}
             fontSize={'sm'}
-            color={'gray.400'}
-            maxWidth={150}
-            overflow={'hidden'}
-            textOverflow={'ellipsis'}
-            whiteSpace={'nowrap'}
+            color={'gray'}
+            backgroundColor={'whiteAlpha.800'}
+            onClick={signIn}
           >
-            {nearService!.wallet.getAccountId()}
-          </Text>
-
-        </MenuButton>
-        <MenuList>
-          <MenuItem
-            onClick={signOut}
-            fontWeight={'bold'}
-            fontSize={'sm'}
-            color={'gray.600'}
-          >
-            Sign out
-          </MenuItem>
-          {/*<MenuItem*/}
-          {/*  fontWeight={'bold'}*/}
-          {/*  fontSize={'sm'}*/}
-          {/*  color={'gray.600'}*/}
-          {/*>*/}
-          {/*  <Link to={'/account'}>*/}
-          {/*    Account*/}
-          {/*  </Link>*/}
-          {/*</MenuItem>*/}
-        </MenuList>
-      </Menu>
+            Sign in with NEAR
+          </Button> :
+          <Menu>
+            <MenuButton
+              as={Button}
+              borderRadius={50}
+              backgroundColor={'whiteAlpha.800'}
+              leftIcon={
+                <Avatar
+                  marginLeft={-5}
+                  src={accountIcon}
+                  size={'md'}
+                  padding={'0.5em'}
+                  backgroundColor={'whiteAlpha.400'}
+                />
+              }
+            >
+              <Text
+                fontWeight={'bold'}
+                fontSize={'sm'}
+                color={'gray'}
+                maxWidth={150}
+                overflow={'hidden'}
+                textOverflow={'ellipsis'}
+                whiteSpace={'nowrap'}
+              >
+                {nearService!.wallet.getAccountId()}
+              </Text>
+            </MenuButton>
+            <MenuList backgroundColor={'whiteAlpha.500'}>
+              <Center>
+                <MenuItem
+                  borderRadius={3}
+                  width={'94%'}
+                  onClick={signOut}
+                  fontWeight={'bold'}
+                  fontSize={'sm'}
+                  color={'gray'}
+                  backgroundColor={'whiteAlpha.800'}
+                >
+                  Sign out
+                </MenuItem>
+              </Center>
+            </MenuList>
+          </Menu>
+      }
+    </Box>
   )
 }

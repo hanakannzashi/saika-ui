@@ -1,6 +1,9 @@
 import {NETWORK_ID} from "./common-config";
 
-export function getWalletConfig() {
+
+export const walletConfig = getWalletConfig()
+
+function getWalletConfig() {
   switch (NETWORK_ID) {
     case 'mainnet':
       return {

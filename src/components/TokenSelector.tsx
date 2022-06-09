@@ -12,26 +12,37 @@ import {
   Flex
 } from "@chakra-ui/react";
 import {MdArrowDropDown} from "react-icons/all";
-import React, {RefObject} from "react";
-import {DEFAULT_TOKEN_ICON} from "../config/token-config";
+import React, {RefObject, useMemo} from "react";
+import {customTokenIconMapping, DEFAULT_TOKEN_ICON} from "../config/token-config";
 import {FocusableElement} from "@chakra-ui/utils";
 import {TokenMetadata} from "../types/near-types";
 
 
 export interface TokenSelectorProps {
-  tokenList: TokenMetadata[],
-  selectedToken: TokenMetadata | null,
-  onTokenSelect: (token: TokenMetadata) => void
+  tokenMetadataList?: TokenMetadata[],
+  tokenMetadata?: TokenMetadata,
+  onChange?: (tokenMetadata: TokenMetadata) => void
   finalFocusRef?: RefObject<FocusableElement>
 }
 
 export const TokenSelector: React.FC<TokenSelectorProps> = ({
-  tokenList,
-  selectedToken,
-  onTokenSelect,
+  tokenMetadataList,
+  tokenMetadata,
+  onChange,
   finalFocusRef
 }) => {
   const {isOpen, onOpen, onClose} = useDisclosure()
+  const tokenIcon: string = useMemo(() => {
+    if (tokenMetadata) {
+      return customTokenIconMapping[tokenMetadata.id] ?? tokenMetadata.icon ?? DEFAULT_TOKEN_ICON
+    } else {
+      return DEFAULT_TOKEN_ICON
+    }
+  }, [tokenMetadata])
+
+  const tokenSymbol: string = useMemo(() => {
+    return tokenMetadata?.symbol ?? ''
+  }, [tokenMetadata])
 
   return (
     <Box>
@@ -40,9 +51,11 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({
         backgroundColor={'white'}
         size={'sm'}
         leftIcon={<MdArrowDropDown/>}
-        rightIcon={<Avatar size={'xs'} src={selectedToken?.icon ?? DEFAULT_TOKEN_ICON}/>}
+        rightIcon={
+          <Avatar size={'xs'} src={tokenIcon}/>
+        }
       >
-        {selectedToken?.symbol ?? ''}
+        {tokenSymbol}
       </Button>
       <Modal
         isOpen={isOpen}
@@ -56,34 +69,38 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({
           <ModalHeader>
             Token
           </ModalHeader>
-          <ModalBody marginBottom={5}>
-            <Stack spacing={2}>
+          <ModalBody>
+            <Stack
+              spacing={2}
+              marginBottom={5}
+            >
               {
-                tokenList.length === 0 ?
-                  <Text fontSize={'sm'}> Empty Token List </Text>
-                  :
-                  tokenList.map((eachToken) => {
-                    const onClick = () => {
+                tokenMetadataList === undefined || tokenMetadataList.length === 0 ?
+                  <Text fontSize={'sm'} fontWeight={'bold'}> Empty Token List </Text> :
+                  tokenMetadataList.map((eachTokenMetadata) => {
+                    const handleSelectTokenMetadata = () => {
                       onClose()
-                      onTokenSelect(eachToken)
+                      if (onChange) {
+                        onChange(eachTokenMetadata)
+                      }
                     }
                     return (
                       <Flex
-                        key={eachToken.id}
+                        key={eachTokenMetadata.id}
                         gap={3}
                         padding={2}
                         borderRadius={10}
                         cursor="pointer"
-                        onClick={onClick}
                         alignItems={'center'}
+                        onClick={handleSelectTokenMetadata}
                       >
-                        <Avatar src={eachToken.icon ?? DEFAULT_TOKEN_ICON} size={'sm'}/>
+                        <Avatar src={customTokenIconMapping[eachTokenMetadata.id] ?? eachTokenMetadata.icon ?? DEFAULT_TOKEN_ICON} size={'sm'}/>
                         <Box>
                           <Text fontSize={'sm'} fontWeight={'bold'}>
-                            {eachToken.symbol}
+                            {eachTokenMetadata.symbol}
                           </Text>
                           <Text fontSize={'xs'} color={'gray'}>
-                            {eachToken.name}
+                            {eachTokenMetadata.name}
                           </Text>
                         </Box>
                       </Flex>

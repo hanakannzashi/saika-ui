@@ -5,7 +5,7 @@ import {Outlet} from 'react-router-dom'
 import {Box} from "@chakra-ui/react";
 import {Header} from "../components/Header";
 import {Footer} from "../components/Footer";
-import dappImage from "../assets/bg.webp"
+import dappImage from "../assets/bg.jpeg"
 
 
 export const Root: React.FC = () => {
@@ -18,7 +18,7 @@ export const Root: React.FC = () => {
 
 
   return (
-    <Box backgroundImage={dappImage} minHeight={800}>
+    <Box backgroundImage={dappImage} minHeight={800} minWidth={600} backgroundSize={'100% 100%'}>
       <Header/>
       <Outlet/>
       <Footer/>

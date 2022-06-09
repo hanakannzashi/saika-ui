@@ -91,8 +91,8 @@ export interface RedPacketView {
   split_mod: string,
   msg: string | null,
   white_list: string[] | null,
-  claimers: any[],
-  failed_claimers: any[],
+  claimers: Record<string, string>[],
+  failed_claimers: Record<string, string>[],
   create_timestamp: string,
   run_out_timestamp: string | null,
   is_run_out: boolean

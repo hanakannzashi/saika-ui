@@ -14,25 +14,26 @@ import {RedPacketTypeSelector} from "./RedPacketTypeSelector";
 import {TokenSelector} from "./TokenSelector";
 import {formatAmount, formatYoctoAmount, ONE_YOCTO, parseAmount, parseYoctoAmount} from "../utils/amount-utils";
 import {useTokenMetadataList} from "../hooks/useTokenMetadataList";
-import {getMaxViewFracDigits, getTokenIdList, nearMetaData} from "../config/token-config";
+import {
+  DEFAULT_MAX_VIEW_FRAC_DIGITS,
+  maxViewFracDigitsMapping,
+  nearMetaData, tokenIdList
+} from "../config/token-config";
 import {isZeroNumUnstandard, parsePosOrZeroIntNum, parsePosOrZeroNumUnstandard} from "../utils/common-utils";
 import {
   MAX_RED_PACKET_NUM,
   RED_PACKET_CONTRACT_REGISTERED_FLAG_PREFIX,
-  RED_PACKET_CONTRACT_STORAGE_DEPOSIT,
+  BASE_RED_PACKET_CONTRACT_STORAGE_DEPOSIT,
   RED_PACKET_PK_PREFIX
 } from "../config/common-config";
 import {KeyPairEd25519} from "near-api-js/lib/utils";
 import {LocalStorageUtils} from "../utils/local-storage-utils";
 import {useNearServiceStore, useWalletSignedInStore} from "../stores/global-stores";
-import {getRedPacketContractConfig} from "../config/contract-config";
+import {redPacketContractConfig} from "../config/contract-config";
 import {FungibleTokenUtils} from "../utils/fungible-token-utils";
 import {tGas} from "../utils/custom-utils";
 import {StorageBalance} from "../types/storage-management";
-
-
-const tokenIdList = getTokenIdList()
-const redPacketContractConfig = getRedPacketContractConfig()
+import BN from "bn.js";
 
 
 export const RedPacket: React.FC = () => {
@@ -40,12 +41,12 @@ export const RedPacket: React.FC = () => {
   const {isSignedIn} = useWalletSignedInStore()
 
   const {tokenMetadataList} = useTokenMetadataList(tokenIdList)
-
   const [tokenBalance, setTokenBalance] = useState<string | null>(null)
-  const [token, setToken] = useState<TokenMetadata>(nearMetaData)
-  const [tokenAmount, setTokenAmount] = useState<string>('0')
+
+  const [tokenMetadata, setTokenMetadata] = useState<TokenMetadata>(nearMetaData)
+  const [tokenAmount, setTokenAmount] = useState<string>('')
   const [redPacketType, setRedPacketType] = useState<RedPacketType>('Average')
-  const [redPacketNum, setRedPacketNum] = useState<string>('0')
+  const [redPacketNum, setRedPacketNum] = useState<string>('')
 
   const [isRedPacketContractRegistered, setIsRedPacketContractRegistered] = useState<boolean>(false)
   const [isPutMoneyOrRegisterButtonLoading, setIsPutMoneyOrRegisterButtonLoading] = useState<boolean>(false)
@@ -73,8 +74,8 @@ export const RedPacket: React.FC = () => {
       return
     }
     const key = RED_PACKET_CONTRACT_REGISTERED_FLAG_PREFIX + nearService.wallet.getAccountId()
-    const localFlag = LocalStorageUtils.getValue<StorageBalance>(key) !== null
-    if (localFlag) {
+    const available = LocalStorageUtils.getValue<StorageBalance>(key)?.available
+    if (available && new BN(available).gtn(0)) {
       setIsRedPacketContractRegistered(true)
       return
     }
@@ -85,12 +86,12 @@ export const RedPacket: React.FC = () => {
         if (storageBalance) {
           LocalStorageUtils.setValue(key, storageBalance)
           setIsRedPacketContractRegistered(true)
-        } else {
-          console.log('account ' + nearService.wallet.getAccountId() + ' doesn\'t register red packet contract')
+          return
         }
+        console.log(`account ${nearService.wallet.getAccountId()} doesn't register red packet contract`)
       })
       .catch((err) => {
-        console.error('fetch storage balance error: ' + err)
+        console.error(err)
       })
   }, [nearService ,isSignedIn])
 
@@ -98,7 +99,7 @@ export const RedPacket: React.FC = () => {
     if (!nearService || !isSignedIn) {
       return
     }
-    if (token.id === 'NEAR') {
+    if (tokenMetadata.id === 'NEAR') {
       nearService.wallet.account().getAccountBalance()
         .then((accountBalance) => {
           setTokenBalance(accountBalance.available)
@@ -107,7 +108,7 @@ export const RedPacket: React.FC = () => {
     }
     FungibleTokenUtils.ftBalanceOf(
       nearService.wallet.account(),
-      token.id,
+      tokenMetadata.id,
       {
         account_id: nearService.wallet.getAccountId()
       }
@@ -116,9 +117,9 @@ export const RedPacket: React.FC = () => {
         setTokenBalance(tokenBalance)
       })
       .catch((err) => {
-        console.error('get token balance error, token id: ' + token.id + ', error: ' + err)
+        console.error(err)
       })
-  }, [nearService, isSignedIn, token.id])
+  }, [nearService, isSignedIn, tokenMetadata.id])
 
   const createNearRedPacket = async (
     publicKey: string,
@@ -174,36 +175,38 @@ export const RedPacket: React.FC = () => {
     )
   }
 
-  const onTokenSelect = (token: TokenMetadata) => {
-    setToken(token)
+  const handleSaveTokenMetadata = (tokenMetadata: TokenMetadata) => {
+    setTokenMetadata(tokenMetadata)
   }
 
-  const onTokenAmountChange = (tokenAmount: string) => {
-    if (tokenAmount !== '') {
-      tokenAmount = parsePosOrZeroNumUnstandard(tokenAmount)
-      if (tokenBalance) {
-        let amount = Number(tokenAmount)
-        let balacne = Number(formatAmount(tokenBalance, token.decimals, getMaxViewFracDigits(token.id)))
-        let limitAmount;
-        if (token.id === 'NEAR') {
-          limitAmount = balacne - 1
-        } else {
-          limitAmount = balacne
-        }
-        limitAmount = limitAmount > 0 ? limitAmount : 0
-        if (amount > limitAmount) {
-          tokenAmount = limitAmount.toString()
-        }
-      }
+  const handleSaveTokenAmount = (tokenAmount: string) => {
+    if (!tokenAmount) {
+      setTokenAmount(tokenAmount)
+      return
+    }
+    tokenAmount = parsePosOrZeroNumUnstandard(tokenAmount)
+    if (!tokenBalance) {
+      setTokenAmount(tokenAmount)
+      return
+    }
+    let tokenAmountNum = Number(tokenAmount)
+    let tokenBalanceNum = Number(formatAmount(tokenBalance,
+        tokenMetadata.decimals,
+        maxViewFracDigitsMapping[tokenMetadata.id] ?? DEFAULT_MAX_VIEW_FRAC_DIGITS
+    ))
+    let limitAmount = tokenMetadata.id === 'NEAR' ? tokenBalanceNum - 1 : tokenBalanceNum
+    limitAmount = limitAmount > 0 ? limitAmount : 0
+    if (tokenAmountNum > limitAmount) {
+      tokenAmount = limitAmount.toString()
     }
     setTokenAmount(tokenAmount)
   }
 
-  const onRedPacketTypeSelect = (redPacketType: RedPacketType) => {
+  const handleSaveRedPacketType = (redPacketType: RedPacketType) => {
     setRedPacketType(redPacketType)
   }
 
-  const onRedPacketNumChange = (redPacketNum: string) => {
+  const handleSaveRedPacketNum = (redPacketNum: string) => {
     if (redPacketNum !== '') {
       redPacketNum = parsePosOrZeroIntNum(redPacketNum)
         if (parseInt(redPacketNum) > MAX_RED_PACKET_NUM) {
@@ -213,24 +216,22 @@ export const RedPacket: React.FC = () => {
     setRedPacketNum(redPacketNum)
   }
 
-   const onRegisterRedPacketContract = async () => {
+   const handleRegisterRedPacketContract = async () => {
     setIsPutMoneyOrRegisterButtonLoading(true)
     await nearService!.redPacketContract.storage_deposit({
       args: {},
-      amount: RED_PACKET_CONTRACT_STORAGE_DEPOSIT
+      amount: BASE_RED_PACKET_CONTRACT_STORAGE_DEPOSIT
     })
   }
 
-  const onPutMoney = async (): Promise<any> => {
+  const handlePutMoney = async (): Promise<any> => {
     setIsPutMoneyOrRegisterButtonLoading(true)
-
     const keyPair = KeyPairEd25519.fromRandom()
     const publicKey = keyPair.getPublicKey().toString()
     const privateKey = keyPair.secretKey
-
     LocalStorageUtils.setValue(RED_PACKET_PK_PREFIX + publicKey, privateKey)
 
-    if(token.id === 'NEAR') {
+    if(tokenMetadata.id === 'NEAR') {
       await createNearRedPacket(
         publicKey,
         parseInt(redPacketNum),
@@ -239,33 +240,35 @@ export const RedPacket: React.FC = () => {
       )
     } else {
       await createFungibleTokenRedPacket(
-        token.id,
+        tokenMetadata.id,
         redPacketContractConfig.contractId,
         publicKey,
         parseInt(redPacketNum),
         redPacketType,
-        parseAmount(tokenAmount, token.decimals)
+        parseAmount(tokenAmount, tokenMetadata.decimals)
       )
     }
   }
 
   return (
     <Box>
-      <Stack spacing={0} marginInline={10}>
+      <Center fontWeight={'bold'} marginBottom={7}>
+        🎉 Create Red Packet and share with your friends 🎉
+      </Center>
+      <Stack spacing={5} marginInline={10}>
         <FormControl isDisabled={!isSignedIn || !isRedPacketContractRegistered}>
-          <FormLabel fontSize={'sm'}>
-            Number
-          </FormLabel>
-          <NumberInput value={redPacketNum} onChange={onRedPacketNumChange}>
+          <NumberInput value={redPacketNum} onChange={handleSaveRedPacketNum}>
             <InputGroup>
               <NumberInputField
+                placeholder={'Red Packet Number'}
+                _placeholderShown={{fontSize: 'sm'}}
                 shadow={'base'}
                 ref={redPacketTypeSelectorFinalFocusRef}
               />
               <InputRightElement width={'auto'} marginRight={1}>
                 <RedPacketTypeSelector
                   redPacketType={redPacketType}
-                  onRedPacketTypeSelect={onRedPacketTypeSelect}
+                  onChange={handleSaveRedPacketType}
                   finalFocusRef={redPacketTypeSelectorFinalFocusRef}
                 />
               </InputRightElement>
@@ -279,20 +282,19 @@ export const RedPacket: React.FC = () => {
           </Flex>
         </FormControl>
         <FormControl isDisabled={!isSignedIn || !isRedPacketContractRegistered}>
-          <FormLabel fontSize={'sm'}>
-            Total Amount
-          </FormLabel>
-          <NumberInput value={tokenAmount} onChange={onTokenAmountChange}>
+          <NumberInput value={tokenAmount} onChange={handleSaveTokenAmount}>
             <InputGroup>
               <NumberInputField
+                placeholder={'Total Amount'}
+                _placeholderShown={{fontSize: 'sm'}}
                 shadow={'base'}
                 ref={tokenSelectorFinalFocusRef}
               />
               <InputRightElement width={'auto'} marginRight={1}>
                 <TokenSelector
-                  tokenList={tokenMetadataList}
-                  selectedToken={token}
-                  onTokenSelect={onTokenSelect}
+                  tokenMetadataList={tokenMetadataList}
+                  tokenMetadata={tokenMetadata}
+                  onChange={handleSaveTokenMetadata}
                   finalFocusRef={tokenSelectorFinalFocusRef}
                 />
               </InputRightElement>
@@ -303,17 +305,17 @@ export const RedPacket: React.FC = () => {
             {
               isSignedIn ?
                 <FormHelperText fontSize={'xs'}>
-                  Balance: &nbsp;
+                  {'Balance: '}
                   {
                     tokenBalance ?
                       formatAmount(
                         tokenBalance,
-                        token.decimals,
-                        getMaxViewFracDigits(token.id)
-                      ) : 'Not Available'
+                        tokenMetadata.decimals,
+                        maxViewFracDigitsMapping[tokenMetadata.id] ?? DEFAULT_MAX_VIEW_FRAC_DIGITS
+                      ) :
+                      'Not Available'
                   }
-                </FormHelperText>
-                :
+                </FormHelperText> :
                 <FormHelperText fontSize={'xs'}>
                   Sign in to check balance
                 </FormHelperText>
@@ -331,7 +333,8 @@ export const RedPacket: React.FC = () => {
             color={'white'}
             fontSize={'sm'}
             backgroundColor={currentTypeColor}
-            onClick={isRedPacketContractRegistered ? onPutMoney : onRegisterRedPacketContract}
+            minWidth={200}
+            onClick={isRedPacketContractRegistered ? handlePutMoney : handleRegisterRedPacketContract}
           >
             {
               !isSignedIn ?
@@ -339,7 +342,7 @@ export const RedPacket: React.FC = () => {
                 isRedPacketContractRegistered ?
                   'Put Money' :
                   <Flex alignItems={'center'} gap={1}>
-                    {'Register with ' + formatYoctoAmount(RED_PACKET_CONTRACT_STORAGE_DEPOSIT)}
+                    {'Register with ' + formatYoctoAmount(BASE_RED_PACKET_CONTRACT_STORAGE_DEPOSIT)}
                     <Text fontSize={'large'}>
                       Ⓝ
                     </Text>
@@ -352,7 +355,7 @@ export const RedPacket: React.FC = () => {
             👆
           </Center>
           <Flex fontSize={'xs'} alignItems={'center'} justify={'center'} gap={1}>
-            By first use, you should pay {formatYoctoAmount(RED_PACKET_CONTRACT_STORAGE_DEPOSIT)}
+            By first use, you should pay {formatYoctoAmount(BASE_RED_PACKET_CONTRACT_STORAGE_DEPOSIT)}
             <Text fontSize={'large'}>
               Ⓝ
             </Text>

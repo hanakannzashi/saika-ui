@@ -1,12 +1,11 @@
 import {NETWORK_ID} from "./common-config";
-import {TokenMetadata} from "../types/near-types";
 import defaultTokenIcon from "../assets/default-token-icon.svg"
 import nearIcon from "../assets/near-icon.svg"
 
 export const DEFAULT_TOKEN_ICON = defaultTokenIcon
 export const DEFAULT_MAX_VIEW_FRAC_DIGITS = 4
 
-export const nearMetaData: TokenMetadata = {
+export const nearMetaData = {
   id: 'NEAR',
   name: 'NEAR Protocol',
   symbol: 'NEAR',
@@ -14,7 +13,11 @@ export const nearMetaData: TokenMetadata = {
   decimals: 24
 }
 
-export function getTokenIdList():string[] {
+export const tokenIdList = getTokenIdList()
+export const maxViewFracDigitsMapping = getMaxViewFracDigitsMapping()
+export const customTokenIconMapping = getCustomTokenIconMapping()
+
+function getTokenIdList() {
   switch (NETWORK_ID) {
     case 'mainnet':
       return [
@@ -34,16 +37,16 @@ export function getTokenIdList():string[] {
   }
 }
 
-export function getMaxViewFracDigitsMapping() {
+function getMaxViewFracDigitsMapping() {
   switch (NETWORK_ID) {
     case 'mainnet':
       return {
-
+        'NEAR': 2
       }
 
     case 'testnet':
       return {
-
+        'NEAR': 2
       }
 
     default:
@@ -51,6 +54,19 @@ export function getMaxViewFracDigitsMapping() {
   }
 }
 
-export function getMaxViewFracDigits(tokenId: string) {
-  return getMaxViewFracDigitsMapping()[tokenId] ?? DEFAULT_MAX_VIEW_FRAC_DIGITS
+function getCustomTokenIconMapping() {
+  switch (NETWORK_ID) {
+    case 'mainnet':
+      return {
+        'wrap.near': 'https://i.postimg.cc/4xx2KRxt/wNEAR.png'
+      }
+
+    case 'testnet':
+      return {
+        'wrap.testnet': 'https://i.postimg.cc/4xx2KRxt/wNEAR.png'
+      }
+
+    default:
+      throw new Error(`network id '${NETWORK_ID}' is invalid`);
+  }
 }

@@ -2,29 +2,31 @@ import {useNearServiceStore, useWalletSignedInStore} from "../stores/global-stor
 import {useCallback, useEffect, useState} from "react";
 import {RedPacketView} from "../near/red-packet-contract";
 
-export const useRedPacketViews = () => {
+export const useRedPacketViews = (ownerId?: string) => {
   const {nearService} = useNearServiceStore()
-  const {isSignedIn} = useWalletSignedInStore()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isErr, setIsErr] = useState<boolean>(false)
   const [views, setViews] = useState<RedPacketView[]>([])
-  const [reflushCount, setReflushCount] = useState<number>(0)
+  const [refreshCount, setRefreshCount] = useState<number>(0)
 
-  const onReflush = useCallback(() => {
+  const onRefresh = useCallback(() => {
     setIsLoading(true)
     setIsErr(false)
     setViews([])
-    setReflushCount((oldReflushCount) => {
-      return oldReflushCount + 1
+    setRefreshCount((oldRefreshCount) => {
+      return oldRefreshCount + 1
     })
   }, [])
 
   useEffect(() => {
-    if (!nearService || !isSignedIn) {
+    if (!nearService) {
+      return
+    }
+    if (!ownerId) {
       return
     }
     nearService.redPacketContract.get_red_packets_by_owner_id({
-      owner_id: nearService.wallet.getAccountId()
+      owner_id: ownerId
     })
       .then((views) => {
         setViews(views)
@@ -34,7 +36,7 @@ export const useRedPacketViews = () => {
         setIsErr(true)
         console.error('fetch red packet views error: ' + err)
       })
-  }, [nearService, isSignedIn, reflushCount])
+  }, [nearService, ownerId, refreshCount])
 
-  return {isLoading, isErr, views, reflushCount, onReflush}
+  return {isLoading, isErr, views, refreshCount, onRefresh}
 }

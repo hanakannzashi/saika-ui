@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {
   Avatar,
-  ButtonGroup,
   Flex,
   GridItem,
   Image,
@@ -15,33 +14,74 @@ import {useNearServiceStore, useWalletSignedInStore} from "../stores/global-stor
 import {useRedPacketViews} from "../hooks/useRedPacketViews";
 import {useTokenMetadataList} from "../hooks/useTokenMetadataList";
 import {
+  customTokenIconMapping,
+  DEFAULT_MAX_VIEW_FRAC_DIGITS,
   DEFAULT_TOKEN_ICON,
-  getMaxViewFracDigits,
-  getTokenIdList
+  maxViewFracDigitsMapping,
+  tokenIdList
 } from "../config/token-config";
 import {formatAmount} from "../utils/amount-utils";
 import redPacketCover from "../assets/redpacket-cover.svg";
 import {tGas} from "../utils/custom-utils";
 import {FinalExecutionOutcome} from "near-api-js/lib/providers";
-import {getRedPacketContractConfig} from "../config/contract-config";
+import {redPacketContractConfig} from "../config/contract-config";
 import {RED_PACKET_PK_PREFIX} from "../config/common-config";
 import {LocalStorageUtils} from "../utils/local-storage-utils";
 import {toBase64} from "js-base64";
 import {AccessKeyInfoView} from "near-api-js/lib/providers/provider";
 import copy from "copy-to-clipboard";
+import BN from "bn.js";
 
-
-const tokenIdList = getTokenIdList()
-const redPacketContractConfig = getRedPacketContractConfig()
 
 export const ActiveRedPacketViews: React.FC = () => {
   const {nearService} = useNearServiceStore()
   const {isSignedIn} = useWalletSignedInStore()
-  const {views, onReflush} = useRedPacketViews()
   const {tokenMetadataList} = useTokenMetadataList(tokenIdList)
   const [userAccessKeys, setUserAccessKeys] = useState<AccessKeyInfoView[]>([])
-  const [refundButtonState, setRefundButtonState] = useState<any>({})
-  const [copyButtonState, setCopyButtonState] = useState<any>({})
+  const [refundButtonsState, setRefundButtonsState] = useState<Record<string, any>>({})
+  const [copyButtonsState, setCopyButtonsState] = useState<Record<string, any>>({})
+
+  const ownerId = useMemo(() => {
+    if (!nearService || !isSignedIn) {
+      return undefined
+    }
+    return nearService.wallet.getAccountId()
+  }, [nearService, isSignedIn])
+
+  const {views, onRefresh} = useRedPacketViews(ownerId)
+
+  const filterViews = useMemo(() => {
+    const filterViews = []
+    for (let i = 0;i < views.length;i++) {
+      const view = views[i]
+      const tokenId = view.token_id ?? 'NEAR'
+      const isUnsupportedToken = tokenIdList.find((i) => i === tokenId) === undefined
+      if (view.is_run_out || isUnsupportedToken) {
+        continue
+      }
+      const tokenMetadata = tokenMetadataList.find((t) => t.id === tokenId)
+      if (!tokenMetadata) {
+        continue
+      }
+      const filterView = {
+        tokenId,
+        tokenMetadata,
+        view
+      }
+      filterViews.push(filterView)
+    }
+    return filterViews.sort((a, b) => {
+        const a_create_timestamp = new BN(a.view.create_timestamp)
+        const b_create_timestamp = new BN(b.view.create_timestamp)
+        if (a_create_timestamp < b_create_timestamp) {
+          return 1
+        }
+        if (a_create_timestamp > b_create_timestamp) {
+          return -1
+        }
+        return 0
+      })
+  }, [views, tokenMetadataList])
 
   useEffect(() => {
     if (!nearService || !isSignedIn) {
@@ -52,23 +92,6 @@ export const ActiveRedPacketViews: React.FC = () => {
         setUserAccessKeys(accessKeyInfoViews)
       })
   }, [nearService, isSignedIn])
-
-  const refund = async (publicKey: string): Promise<string> => {
-    return nearService!.redPacketContract.refund({
-      args: {
-        public_key: publicKey
-      },
-      gas: tGas(50)
-    })
-  }
-
-  const approve = async (publicKey: string):Promise<FinalExecutionOutcome> => {
-    return nearService!.wallet.account().addKey(
-      publicKey,
-      redPacketContractConfig.contractId,
-      ['claim_red_packet']
-    )
-  }
 
   const isUserHasTargetKey = (publicKey: string): boolean => {
     return userAccessKeys.find((accessKeyInfoView) => accessKeyInfoView.public_key === publicKey) !== undefined
@@ -85,37 +108,20 @@ export const ActiveRedPacketViews: React.FC = () => {
   }
 
   return (
-    <Stack
-      gap={5}
-    >
+    <Stack spacing={5}>
       <Stack
         maxHeight={200}
         overflow={'auto'}
       >
         {
-          views.length === 0 ?
+          filterViews.length === 0 ?
             <Center>
-              <Text fontWeight={'bold'}>
+              <Text fontWeight={'bold'} fontSize={'x-large'}>
                 Go create a Red Packet!
               </Text>
             </Center>
             :
-            views.map((view) => {
-              if (view.is_run_out) {
-                return null
-              }
-
-              const tokenId = view.token_id ?? 'NEAR'
-              const isSupportedToken = tokenIdList.find((i) => i === tokenId) !== undefined
-              const tokenMetadata = tokenMetadataList.find((t) => t.id === tokenId)
-
-              if (!isSupportedToken) {
-                return null
-              }
-              if (!tokenMetadata) {
-                return null
-              }
-
+            filterViews.map(({tokenId, view, tokenMetadata}) => {
               const privateKey = LocalStorageUtils.getValue<string>(RED_PACKET_PK_PREFIX + view.public_key)
 
               let approveEnabled = false;
@@ -128,22 +134,30 @@ export const ActiveRedPacketViews: React.FC = () => {
                 }
               }
 
-              const onApprove = async () => {
-                await approve(view.public_key)
+              const handleApprove = async () => {
+                await nearService!.wallet.account().addKey(
+                  view.public_key,
+                  redPacketContractConfig.contractId,
+                  ['claim_red_packet']
+                )
               }
 
-              const onCopyLink = () => {
-                setCopyButtonState({
-                  ...copyButtonState,
+              const handleCopyLink = () => {
+                setCopyButtonsState({
+                  ...copyButtonsState,
                   [view.public_key]: {
                     text: 'Copied'
                   }
                 })
-                const claimLink = buildClaimLink(nearService!.wallet.account().accountId, privateKey!)
-                copy(claimLink)
+
+                copy(buildClaimLink(
+                  nearService!.wallet.getAccountId(),
+                  privateKey!
+                ))
+
                 setTimeout(() => {
-                  setCopyButtonState({
-                    ...copyButtonState,
+                  setCopyButtonsState({
+                    ...copyButtonsState,
                     [view.public_key]: {
                       text: 'Copy Link'
                     }
@@ -152,20 +166,25 @@ export const ActiveRedPacketViews: React.FC = () => {
               }
 
               const onRefund = () => {
-                setRefundButtonState({
-                  ...refundButtonState,
+                setRefundButtonsState({
+                  ...refundButtonsState,
                   [view.public_key]: {
                     isLoading: true
                   }
                 })
-                refund(view.public_key)
-                  .then((refundedAmount) => {
-                    onReflush()
+
+                nearService!.redPacketContract.refund({
+                  args: {
+                    public_key: view.public_key
+                  },
+                  gas: tGas(50)
+                })
+                  .then((_refundedAmount) => {
                     LocalStorageUtils.removeValue(RED_PACKET_PK_PREFIX + view.public_key)
-                    console.log('refunded token id: ' + tokenId + ', amount: ' + formatAmount(refundedAmount, tokenMetadata.decimals, getMaxViewFracDigits(tokenMetadata.id)))
+                    onRefresh()
                   })
                   .catch((err) => {
-                    console.error('refund error: ' + err)
+                    console.error(err)
                   })
               }
 
@@ -178,11 +197,15 @@ export const ActiveRedPacketViews: React.FC = () => {
                   <GridItem colSpan={3}>
                     <Flex gap={3} alignItems={'center'}>
                       <Tooltip label={tokenMetadata.symbol} fontSize={'xs'}>
-                        <Avatar src={tokenMetadata?.icon ?? DEFAULT_TOKEN_ICON} size={'sm'}/>
+                        <Avatar src={customTokenIconMapping[tokenId] ?? tokenMetadata.icon ?? DEFAULT_TOKEN_ICON} size={'sm'}/>
                       </Tooltip>
                       <Text fontWeight={'bold'} fontSize={'md'}>
                         {
-                          formatAmount(view.current_balance, tokenMetadata.decimals, getMaxViewFracDigits(tokenId))
+                          formatAmount(
+                            view.current_balance,
+                            tokenMetadata.decimals,
+                            maxViewFracDigitsMapping[tokenId] ?? DEFAULT_MAX_VIEW_FRAC_DIGITS
+                          )
                         }
                       </Text>
                     </Flex>
@@ -193,30 +216,16 @@ export const ActiveRedPacketViews: React.FC = () => {
                       gap={3}
                     >
                       <Tooltip label={view.split_mod} fontSize={'xs'}>
-                        {
-                          view.split_mod === 'Average' ?
-                            <Flex
-                              width={6}
-                              height={9}
-                              borderTopRadius={2}
-                              borderBottomRadius={2}
-                              backgroundColor={'#e3514c'}
-                              justify={'center'}
-                            >
-                              <Image src={redPacketCover} width={3.5}/>
-                            </Flex>
-                            :
-                            <Flex
-                              width={6}
-                              height={9}
-                              borderTopRadius={2}
-                              borderBottomRadius={2}
-                              backgroundColor={'#1cbbb4'}
-                              justify={'center'}
-                            >
-                              <Image src={redPacketCover} width={3.5}/>
-                            </Flex>
-                        }
+                        <Flex
+                          width={6}
+                          height={9}
+                          borderTopRadius={2}
+                          borderBottomRadius={2}
+                          backgroundColor={view.split_mod === 'Average' ? '#e3514c' : '#1cbbb4'}
+                          justify={'center'}
+                        >
+                          <Image src={redPacketCover} width={3.5}/>
+                        </Flex>
                       </Tooltip>
                       <Text fontWeight={'bold'}>
                         {view.current_split}
@@ -236,7 +245,7 @@ export const ActiveRedPacketViews: React.FC = () => {
                         size={'xs'}
                         isDisabled={!approveEnabled}
                         hidden={!approveEnabled}
-                        onClick={onApprove}
+                        onClick={handleApprove}
                       >
                         Approve
                       </Button>
@@ -244,13 +253,13 @@ export const ActiveRedPacketViews: React.FC = () => {
                         width={'6em'}
                         size={'xs'}
                         colorScheme={'teal'}
-                        onClick={onCopyLink}
+                        onClick={handleCopyLink}
                         isDisabled={!copyLinkEnabled}
                       >
-                        {copyButtonState[view.public_key]?.text ?? 'Copy Link'}
+                        {copyButtonsState[view.public_key]?.text ?? 'Copy Link'}
                       </Button>
                       <Button
-                        isLoading={refundButtonState[view.public_key]?.isLoading ?? false}
+                        isLoading={refundButtonsState[view.public_key]?.isLoading ?? false}
                         loadingText={'Refunding'}
                         size={'xs'}
                         colorScheme={'pink'}
@@ -266,7 +275,7 @@ export const ActiveRedPacketViews: React.FC = () => {
         }
       </Stack>
       <Center>
-        <Text fontSize={'xs'} fontWeight={'bold'}>
+        <Text fontSize={'sm'} fontWeight={'bold'}>
           Active Red Packets
         </Text>
       </Center>

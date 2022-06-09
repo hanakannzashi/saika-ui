@@ -1,7 +1,8 @@
 import {NETWORK_ID} from "./common-config";
 
+export const nearConfig = getNearConfig()
 
-export function getNearConfig() {
+function getNearConfig() {
   switch (NETWORK_ID) {
     case 'mainnet':
       return {

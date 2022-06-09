@@ -10,25 +10,24 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  VStack,
   Image,
-  Flex, Center
+  Flex,
+  Center, VStack
 } from "@chakra-ui/react";
 import {MdArrowDropDown} from "react-icons/all";
 import {RedPacketType} from "../types/near-types";
 import redPacketCover from "../assets/redpacket-cover.svg"
-import redPacketIcon from "../assets/red-packet-icon.png"
 
 
 interface RedPacketTypeSelectorProps {
-  redPacketType: RedPacketType,
-  onRedPacketTypeSelect: (redPacketType: RedPacketType) => void
+  redPacketType?: RedPacketType,
+  onChange?: (redPacketType: RedPacketType) => void
   finalFocusRef?: RefObject<FocusableElement>
 }
 
 export const RedPacketTypeSelector: React.FC<RedPacketTypeSelectorProps> = ({
   redPacketType,
-  onRedPacketTypeSelect,
+  onChange,
   finalFocusRef
 }) => {
   const {isOpen, onOpen, onClose} = useDisclosure()
@@ -40,20 +39,23 @@ export const RedPacketTypeSelector: React.FC<RedPacketTypeSelectorProps> = ({
     }
   }, [redPacketType])
 
-  const onClickAverage = () => {
+  const handleSelectAverage = () => {
     onClose()
-    onRedPacketTypeSelect('Average')
+    if (onChange) {
+      onChange('Average')
+    }
   }
 
-  const onClickRandom = () => {
+  const handleSelectRandom = () => {
     onClose()
-    onRedPacketTypeSelect('Random')
+    if (onChange) {
+       onChange('Random')
+    }
   }
 
   return (
     <Box>
       <Button
-        gap={1}
         color={'white'}
         size={'sm'}
         leftIcon={<MdArrowDropDown/>}
@@ -75,44 +77,46 @@ export const RedPacketTypeSelector: React.FC<RedPacketTypeSelectorProps> = ({
             Type
           </ModalHeader>
           <ModalBody>
-            <Flex gap={'3em'} paddingInline={3} paddingTop={5} paddingBottom={10} justify={'center'}>
+            <Flex gap={10} paddingTop={5} paddingBottom={10} justify={'center'}>
               <Box
-                paddingBottom={2}
+                paddingBottom={3}
                 width={130}
-                borderTopRadius={5}
-                borderBottomRadius={5}
+                borderRadius={5}
                 cursor="pointer"
                 backgroundColor={'#e3514c'}
-                onClick={onClickAverage}
+                onClick={handleSelectAverage}
               >
                 <Center>
                   <Image src={redPacketCover} width={20}/>
                 </Center>
-                <Center marginTop={2} fontWeight={'bold'} color={'#EEC88C'}>
-                  Average
-                </Center>
-                <Center fontWeight={'bold'} fontSize={'sm'} color={'#EEC88C'}>
-                  Red Packet
-                </Center>
+                <VStack spacing={0}>
+                  <Text fontWeight={'bold'} color={'#EEC88C'}>
+                    Average
+                  </Text>
+                  <Text fontWeight={'bold'} fontSize={'sm'} color={'#EEC88C'}>
+                    Red Packet
+                  </Text>
+                </VStack>
               </Box>
               <Box
-                paddingBottom={2}
+                paddingBottom={3}
                 width={130}
-                borderTopRadius={5}
-                borderBottomRadius={5}
+                borderRadius={5}
                 cursor="pointer"
                 backgroundColor={'#1cbbb4'}
-                onClick={onClickRandom}
+                onClick={handleSelectRandom}
               >
                 <Center>
                   <Image src={redPacketCover} width={20}/>
                 </Center>
-                <Center marginTop={2} fontWeight={'bold'} color={'#EEC88C'}>
-                  Rondom
-                </Center>
-                <Center fontWeight={'bold'} fontSize={'sm'} color={'#EEC88C'}>
-                  Red Packet
-                </Center>
+                <VStack spacing={0}>
+                  <Text fontWeight={'bold'} color={'#EEC88C'}>
+                    Average
+                  </Text>
+                  <Text fontWeight={'bold'} fontSize={'sm'} color={'#EEC88C'}>
+                    Red Packet
+                  </Text>
+                </VStack>
               </Box>
             </Flex>
           </ModalBody>

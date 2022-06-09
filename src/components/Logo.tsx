@@ -1,18 +1,18 @@
 import React from "react";
-import {Box} from "@chakra-ui/react";
+import {Flex, Image} from "@chakra-ui/react";
+import saikaLogo from "../assets/saika-logo.png"
 
 export const Logo: React.FC = () => {
   return (
-    <Box
-      paddingInline={3}
-      paddingBlock={2}
+    <Flex
       backgroundColor={'whiteAlpha.800'}
+      padding={2}
       color={'#c2cfe4'}
       shadow={'base'}
       borderRadius={10}
       fontWeight={'bold'}
     >
-      🧧 Saika Red Packet
-    </Box>
+      <Image src={saikaLogo} width={'7em'} height={'2em'}/>
+    </Flex>
   )
 }

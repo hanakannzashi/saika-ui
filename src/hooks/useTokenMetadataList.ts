@@ -3,6 +3,7 @@ import {TokenMetadata} from "../types/near-types";
 import {FungibleTokenUtils} from "../utils/fungible-token-utils";
 import {useNearServiceStore} from "../stores/global-stores";
 import {nearMetaData} from "../config/token-config";
+import {FungibleTokenMetadata} from "../near/fungible-token-contract";
 
 
 export const useTokenMetadataList = (tokenIdList: string[]) => {
@@ -13,36 +14,29 @@ export const useTokenMetadataList = (tokenIdList: string[]) => {
     if (!nearService) {
       return
     }
-    tokenIdList.forEach((tokenId) => {
-      const isTokenExist = tokenMetadataList.find((t) => t.id === tokenId) !== undefined
-      if (isTokenExist) {
-        return
-      }
+    const promises = tokenIdList.map((tokenId) => {
       if (tokenId === 'NEAR') {
-        setTokenMetadataList((oldTokenMetadataList) => {
-          return [...oldTokenMetadataList, nearMetaData]
+        return new Promise<TokenMetadata>((resolve) => {
+          resolve(nearMetaData)
         })
-        return
       }
-      FungibleTokenUtils.ftMetadata(
+      return FungibleTokenUtils.ftMetadata(
         nearService.wallet.account(),
         tokenId,
         {}
       )
-        .then((fungibleTokenMetadata) => {
-          const tokenMetadata: TokenMetadata = {
-            ...fungibleTokenMetadata,
-            id: tokenId
-          }
-          setTokenMetadataList((oldTokenMetadataList) => {
-            return [...oldTokenMetadataList, tokenMetadata]
-          })
-        })
-        .catch((err) => {
-          console.warn('fetch token metadata error, token id: ' + tokenId + ', error: ' + err)
-        })
     })
-  }, [nearService]) // eslint-disable-line react-hooks/exhaustive-deps
+    Promise.all<TokenMetadata | FungibleTokenMetadata>(promises)
+      .then((results) => {
+        const tokenMetadataList: TokenMetadata[] = results.map((result, index) => {
+          return {
+            ...result,
+            id: tokenIdList[index]
+          }
+        })
+        setTokenMetadataList(tokenMetadataList)
+      })
+  }, [nearService, tokenIdList])
 
   return {tokenMetadataList}
 }

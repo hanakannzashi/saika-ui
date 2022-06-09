@@ -12,6 +12,7 @@ import {
 import {Root} from "./pages/Root";
 import {LinkdropPage} from "./pages/LinkdropPage";
 import {ClaimPage} from "./pages/ClaimPage";
+import {Home} from "./pages/Home";
 
 
 export const App = () => (
@@ -20,6 +21,7 @@ export const App = () => (
       <Routes>
         <Route path="/" element={<Root />}>
           <Route path="" element={<Navigate to="linkdrop" />} />
+          <Route path="home" element={<Home />} />
           <Route path="linkdrop" element={<LinkdropPage />} />
           <Route path="claim/:base64Params" element={<ClaimPage />} />
         </Route>
