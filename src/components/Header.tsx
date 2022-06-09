@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 
 export const Header: React.FC = () => {
   return (
-    <Flex padding={5} alignItems={'center'}>
+    <Flex padding={5} alignItems={'stretch'}>
       <Link to={'/linkdrop'}>
         <Logo/>
       </Link>

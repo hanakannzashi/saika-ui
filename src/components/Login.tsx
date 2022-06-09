@@ -28,7 +28,7 @@ export const Login: React.FC = () => {
   }
 
   return (
-    <Box height={'max'}>
+    <Box>
       {
         !isSignedIn ?
           <Button
