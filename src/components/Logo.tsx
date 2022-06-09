@@ -6,7 +6,7 @@ export const Logo: React.FC = () => {
   return (
     <Flex
       backgroundColor={'whiteAlpha.800'}
-      padding={2}
+      padding={1}
       color={'#c2cfe4'}
       shadow={'base'}
       borderRadius={10}
