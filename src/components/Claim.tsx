@@ -23,7 +23,6 @@ import {useRedPacketView} from "../hooks/useRedPacketView";
 import {LocalStorageUtils} from "../utils/local-storage-utils";
 import {StorageBalance} from "../types/storage-management";
 import redPacketCover from "../assets/redpacket-cover.png";
-import BN from "bn.js";
 
 
 interface ClaimRedPacketProps {
