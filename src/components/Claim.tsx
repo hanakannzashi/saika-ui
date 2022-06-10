@@ -152,7 +152,6 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
   }, [allowAutoClaim]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const claimRedPacket = async (ownerId: string, privateKey: string): Promise<string> => {
-    const claimer = nearService!.wallet.account()
     const keyPair = KeyPairEd25519.fromString(privateKey)
     const keyStore = new keyStores.InMemoryKeyStore()
     await keyStore.setKey(NETWORK_ID, ownerId, keyPair)
@@ -167,7 +166,7 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
       .claim_red_packet(
         {
           args: {
-            claimer_id: claimer.accountId
+            claimer_id: nearService!.wallet.getAccountId()
           },
           gas: tGas(50)
         }

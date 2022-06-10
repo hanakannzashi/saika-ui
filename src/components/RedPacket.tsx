@@ -33,7 +33,6 @@ import {redPacketContractConfig} from "../config/contract-config";
 import {FungibleTokenUtils} from "../utils/fungible-token-utils";
 import {tGas} from "../utils/custom-utils";
 import {StorageBalance} from "../types/storage-management";
-import BN from "bn.js";
 
 
 export const RedPacket: React.FC = () => {
