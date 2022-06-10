@@ -51,7 +51,7 @@ export const ClaimPage: React.FC = () => {
               publicKey={claimParams.publicKey}
             /> :
             <Text fontWeight={'bold'} fontSize={'lg'}>
-              Invalid Red Packet Link ⚠️
+              ⚠️ Invalid Red Packet Link
             </Text>
         }
       </Flex>
