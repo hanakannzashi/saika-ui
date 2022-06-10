@@ -28,8 +28,11 @@ function getTokenIdList() {
     case 'testnet':
       return [
         'NEAR',
+        'usdn.testnet',
         'wrap.testnet',
+        'stnear.fakes.testnet',
         'oct.fakes.testnet',
+        'usdt.fakes.testnet',
         'dai.fakes.testnet'
       ]
 

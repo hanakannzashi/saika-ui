@@ -74,8 +74,8 @@ export const RedPacket: React.FC = () => {
       return
     }
     const key = RED_PACKET_CONTRACT_REGISTERED_FLAG_PREFIX + nearService.wallet.getAccountId()
-    const available = LocalStorageUtils.getValue<StorageBalance>(key)?.available
-    if (available && new BN(available).gtn(0)) {
+    const storageBalance = LocalStorageUtils.getValue<StorageBalance>(key)
+    if (storageBalance) {
       setIsRedPacketContractRegistered(true)
       return
     }

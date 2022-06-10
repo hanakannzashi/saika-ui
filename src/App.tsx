@@ -20,7 +20,7 @@ export const App = () => (
     <Router>
       <Routes>
         <Route path="/" element={<Root />}>
-          <Route path="" element={<Navigate to="linkdrop" />} />
+          <Route path="" element={<Navigate to="home" />} />
           <Route path="home" element={<Home />} />
           <Route path="linkdrop" element={<LinkdropPage />} />
           <Route path="claim/:base64Params" element={<ClaimPage />} />

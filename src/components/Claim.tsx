@@ -119,8 +119,8 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
       return
     }
     const key = TOKEN_REGISTERED_FLAG_PREFIX + view.token_id + nearService.wallet.getAccountId()
-    const available = LocalStorageUtils.getValue<StorageBalance>(key)?.available
-    if (available && new BN(available).gtn(0)) {
+    const storageBalance = LocalStorageUtils.getValue<StorageBalance>(key)
+    if (storageBalance) {
       setIsTokenRegistered(true)
       return
     }
@@ -251,49 +251,52 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
                 </Box>
                 <Box>
                   {
-                    isAlreadyClaimed ?
-                      <Flex alignItems={'center'} gap={1}>
-                        🎉 &nbsp;
-                        <Text>
+                    !isSignedIn ?
+                      null :
+                      isAlreadyClaimed ?
+                        <Flex alignItems={'center'} gap={1}>
+                          🎉 &nbsp;
+                          <Text>
+                            {
+                              'CLAIMED: ' +
+                              formatAmount(
+                                claimedAmount,
+                                tokenMetadata.decimals,
+                                maxViewFracDigitsMapping[tokenMetadata.id] ?? DEFAULT_MAX_VIEW_FRAC_DIGITS
+                              )
+                            }
+                          </Text>
+                          <Avatar
+                            src={customTokenIconMapping[tokenMetadata.id] ?? tokenMetadata.icon ?? DEFAULT_TOKEN_ICON}
+                            size={'2xs'}
+                          />
+                          &nbsp; 🎉
+                        </Flex> :
+                        <Box>
                           {
-                            'CLAIMED: ' +
-                            formatAmount(
-                              claimedAmount,
-                              tokenMetadata.decimals,
-                              maxViewFracDigitsMapping[tokenMetadata.id] ?? DEFAULT_MAX_VIEW_FRAC_DIGITS
-                            )
+                            view.is_run_out ?
+                              <VStack>
+                                <Text fontWeight={'bold'} fontSize={'lg'}> Empty Red Packet </Text>
+                                <Text> Seems a little late 😅 </Text>
+                              </VStack> :
+                              <Button
+                                hidden={!isSignedIn}
+                                minWidth={100}
+                                fontWeight={'bold'}
+                                isLoading={isClaimOrRegisterButtonLoading}
+                                disabled={!isSignedIn || isClaimOrRegisterButtonLoading}
+                                size={'sm'}
+                                loadingText={isTokenRegistered ? 'Claiming' : 'Connecting Wallet'}
+                                onClick={isTokenRegistered ? handleClaimRedPacket : handleRegisterFungibleToken}
+                              >
+                                {
+                                  isTokenRegistered ?
+                                    'Claim' :
+                                    'Register token and claim'
+                                }
+                              </Button>
                           }
-                        </Text>
-                        <Avatar
-                          src={customTokenIconMapping[tokenMetadata.id] ?? tokenMetadata.icon ?? DEFAULT_TOKEN_ICON}
-                          size={'2xs'}
-                        />
-                        &nbsp; 🎉
-                      </Flex> :
-                      view.is_run_out ?
-                        <VStack>
-                          <Text fontWeight={'bold'} fontSize={'lg'}> Empty Red Packet </Text>
-                          <Text> Seems a little late 😅 </Text>
-                        </VStack> :
-                        <Button
-                          minWidth={100}
-                          fontWeight={'bold'}
-                          isLoading={isClaimOrRegisterButtonLoading}
-                          disabled={!isSignedIn || isClaimOrRegisterButtonLoading}
-                          color={'white'}
-                          size={'sm'}
-                          backgroundColor={view.split_mod === 'Average' ? '#e3514c' : '#1cbbb4'}
-                          loadingText={isTokenRegistered ? 'Claiming' : 'Connecting Wallet'}
-                          onClick={isTokenRegistered ? handleClaimRedPacket : handleRegisterFungibleToken}
-                        >
-                          {
-                            isSignedIn ?
-                              isTokenRegistered ?
-                                'Claim' :
-                                'Register token and claim' :
-                              'Please sign in'
-                          }
-                        </Button>
+                        </Box>
                   }
                 </Box>
               </VStack> :
