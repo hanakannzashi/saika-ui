@@ -285,7 +285,9 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
                                 fontWeight={'bold'}
                                 isLoading={isClaimOrRegisterButtonLoading}
                                 disabled={!isSignedIn || isClaimOrRegisterButtonLoading}
+                                color={'white'}
                                 size={'sm'}
+                                backgroundColor={view.split_mod === 'Average' ? '#e3514c' : '#1cbbb4'}
                                 loadingText={isTokenRegistered ? 'Claiming' : 'Connecting Wallet'}
                                 onClick={isTokenRegistered ? handleClaimRedPacket : handleRegisterFungibleToken}
                               >
