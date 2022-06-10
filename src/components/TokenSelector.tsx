@@ -48,7 +48,7 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({
     <Box>
       <Button
         onClick={onOpen}
-        backgroundColor={'white'}
+        backgroundColor={'whiteAlpha.100'}
         size={'sm'}
         leftIcon={<MdArrowDropDown/>}
         rightIcon={
@@ -65,7 +65,7 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({
         scrollBehavior={'inside'}
       >
         <ModalOverlay/>
-        <ModalContent>
+        <ModalContent backgroundColor={'whiteAlpha.900'}>
           <ModalHeader>
             Token
           </ModalHeader>

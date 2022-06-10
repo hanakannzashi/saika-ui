@@ -20,7 +20,7 @@ export class RedPacketContract extends Contract {
   // @ts-ignore
   async get_red_packets_by_owner_id(_args: GetRedPacketsByOwnerIdArgs): Promise<RedPacketView[]> {}
   // @ts-ignore
-  async get_red_packet_by_pk(_args: GetRedPacketByPkArgs): Promise<RedPacketView> {}
+  async get_red_packet_by_pk(_args: GetRedPacketByPkArgs): Promise<RedPacketView | null> {}
 
 
   // // ------------------------------------------ change methods -----------------------------------------

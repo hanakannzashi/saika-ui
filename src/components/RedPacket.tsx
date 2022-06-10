@@ -338,7 +338,7 @@ export const RedPacket: React.FC = () => {
           >
             {
               !isSignedIn ?
-                'Please Sign in' :
+                'Please sign in' :
                 isRedPacketContractRegistered ?
                   'Put Money' :
                   <Flex alignItems={'center'} gap={1}>

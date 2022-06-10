@@ -21,9 +21,8 @@ import {
   tokenIdList
 } from "../config/token-config";
 import {formatAmount} from "../utils/amount-utils";
-import redPacketCover from "../assets/redpacket-cover.svg";
+import redPacketCover from "../assets/redpacket-cover.png";
 import {tGas} from "../utils/custom-utils";
-import {FinalExecutionOutcome} from "near-api-js/lib/providers";
 import {redPacketContractConfig} from "../config/contract-config";
 import {RED_PACKET_PK_PREFIX} from "../config/common-config";
 import {LocalStorageUtils} from "../utils/local-storage-utils";
@@ -224,7 +223,7 @@ export const ActiveRedPacketViews: React.FC = () => {
                           backgroundColor={view.split_mod === 'Average' ? '#e3514c' : '#1cbbb4'}
                           justify={'center'}
                         >
-                          <Image src={redPacketCover} width={3.5}/>
+                          <Image src={redPacketCover} width={3.5} marginBlock={1}/>
                         </Flex>
                       </Tooltip>
                       <Text fontWeight={'bold'}>

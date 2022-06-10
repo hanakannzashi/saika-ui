@@ -33,11 +33,10 @@ export const ClaimPage: React.FC = () => {
   }, [base64Params])
 
   return (
-    <VStack minHeight={600}>
+    <VStack minHeight={600} justify={'center'}>
       <Flex
         borderRadius={20}
         padding={10}
-        marginTop={10}
         minWidth={300}
         maxWidth={300}
         backgroundColor={'whiteAlpha.700'}

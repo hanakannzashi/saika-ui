@@ -22,7 +22,7 @@ import {FungibleTokenUtils} from "../utils/fungible-token-utils";
 import {useRedPacketView} from "../hooks/useRedPacketView";
 import {LocalStorageUtils} from "../utils/local-storage-utils";
 import {StorageBalance} from "../types/storage-management";
-import redPacketCover from "../assets/redpacket-cover.svg";
+import redPacketCover from "../assets/redpacket-cover.png";
 import BN from "bn.js";
 
 
@@ -234,7 +234,7 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
                   borderRadius={5}
                   backgroundColor={view.split_mod === 'Average' ? '#e3514c' : '#1cbbb4'}
                 >
-                  <Center>
+                  <Center marginTop={5}>
                     <Image src={redPacketCover} width={20}/>
                   </Center>
                   <Flex gap={2} justify={'center'} marginTop={2}>
@@ -243,7 +243,7 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
                     </Tooltip>
                   </Flex>
                   <Center marginTop={2} fontWeight={'bold'} color={'#EEC88C'}>
-                    Average
+                    {view.split_mod}
                   </Center>
                   <Center fontWeight={'bold'} fontSize={'sm'} color={'#EEC88C'}>
                     Red Packet

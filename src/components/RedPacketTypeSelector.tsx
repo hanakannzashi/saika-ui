@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import {MdArrowDropDown} from "react-icons/all";
 import {RedPacketType} from "../types/near-types";
-import redPacketCover from "../assets/redpacket-cover.svg"
+import redPacketCover from "../assets/redpacket-cover.png"
 
 
 interface RedPacketTypeSelectorProps {
@@ -72,7 +72,7 @@ export const RedPacketTypeSelector: React.FC<RedPacketTypeSelectorProps> = ({
         scrollBehavior={'inside'}
       >
         <ModalOverlay/>
-        <ModalContent>
+        <ModalContent backgroundColor={'whiteAlpha.900'}>
           <ModalHeader>
             Type
           </ModalHeader>
@@ -86,7 +86,7 @@ export const RedPacketTypeSelector: React.FC<RedPacketTypeSelectorProps> = ({
                 backgroundColor={'#e3514c'}
                 onClick={handleSelectAverage}
               >
-                <Center>
+                <Center marginTop={5}>
                   <Image src={redPacketCover} width={20}/>
                 </Center>
                 <VStack spacing={0}>
@@ -106,12 +106,12 @@ export const RedPacketTypeSelector: React.FC<RedPacketTypeSelectorProps> = ({
                 backgroundColor={'#1cbbb4'}
                 onClick={handleSelectRandom}
               >
-                <Center>
+                <Center marginTop={5}>
                   <Image src={redPacketCover} width={20}/>
                 </Center>
                 <VStack spacing={0}>
                   <Text fontWeight={'bold'} color={'#EEC88C'}>
-                    Average
+                    Random
                   </Text>
                   <Text fontWeight={'bold'} fontSize={'sm'} color={'#EEC88C'}>
                     Red Packet
