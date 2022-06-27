@@ -8,7 +8,7 @@ function getNearConfig() {
       return {
         headers: {},
         networkId: 'mainnet',
-        nodeUrl: 'https://rpc.mainnet.near.org',
+        nodeUrl: 'https://public-rpc.blockpi.io/http/near',
         walletUrl: 'https://wallet.mainnet.near.org',
         helperUrl: 'https://helper.mainnet.near.org'
       };
@@ -17,7 +17,7 @@ function getNearConfig() {
       return {
         headers: {},
         networkId: 'testnet',
-        nodeUrl: 'https://rpc.testnet.near.org',
+        nodeUrl: 'https://public-rpc.blockpi.io/http/near-testnet',
         walletUrl: 'https://wallet.testnet.near.org',
         helperUrl: 'https://helper.testnet.near.org',
       };

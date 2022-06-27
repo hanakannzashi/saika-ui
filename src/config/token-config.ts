@@ -1,9 +1,10 @@
 import {NETWORK_ID} from "./common-config";
 import defaultTokenIcon from "../assets/default-token-icon.svg"
 import nearIcon from "../assets/near-icon.svg"
+import wnearIcon from "../assets/wnear-icon.png";
 
 export const DEFAULT_TOKEN_ICON = defaultTokenIcon
-export const DEFAULT_MAX_VIEW_FRAC_DIGITS = 4
+export const DEFAULT_MAX_VIEW_FRAC_DIGITS = 5
 
 export const nearMetaData = {
   id: 'NEAR',
@@ -44,12 +45,12 @@ function getMaxViewFracDigitsMapping() {
   switch (NETWORK_ID) {
     case 'mainnet':
       return {
-        'NEAR': 2
+
       }
 
     case 'testnet':
       return {
-        'NEAR': 2
+
       }
 
     default:
@@ -61,12 +62,12 @@ function getCustomTokenIconMapping() {
   switch (NETWORK_ID) {
     case 'mainnet':
       return {
-        'wrap.near': 'https://i.postimg.cc/4xx2KRxt/wNEAR.png'
+        'wrap.near': wnearIcon
       }
 
     case 'testnet':
       return {
-        'wrap.testnet': 'https://i.postimg.cc/4xx2KRxt/wNEAR.png'
+        'wrap.testnet': wnearIcon
       }
 
     default:

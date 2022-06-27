@@ -1,8 +1,21 @@
 import React, {useEffect} from "react";
-import {Avatar, Button, Menu, MenuButton, MenuList, MenuItem, Text, Box, Center} from "@chakra-ui/react";
+import {
+  Avatar,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Text,
+  Box,
+  Center,
+  Stack,
+  VStack,
+} from "@chakra-ui/react";
 import {useNearServiceStore, useWalletSignedInStore} from "../stores/global-stores";
 import {walletConfig} from "../config/wallet-config";
 import accountIcon from "../assets/account-icon.svg"
+import {Link} from "react-router-dom";
 
 
 export const Login: React.FC = () => {
@@ -69,19 +82,26 @@ export const Login: React.FC = () => {
               </Text>
             </MenuButton>
             <MenuList backgroundColor={'whiteAlpha.500'}>
-              <Center>
+              <Link to={'/account'}>
                 <MenuItem
-                  borderRadius={3}
-                  width={'94%'}
-                  onClick={signOut}
                   fontWeight={'bold'}
                   fontSize={'sm'}
                   color={'gray'}
                   backgroundColor={'whiteAlpha.800'}
                 >
-                  Sign out
+                  Account
                 </MenuItem>
-              </Center>
+              </Link>
+              <MenuItem
+                marginTop={2}
+                onClick={signOut}
+                fontWeight={'bold'}
+                fontSize={'sm'}
+                color={'gray'}
+                backgroundColor={'whiteAlpha.800'}
+              >
+                Sign out
+              </MenuItem>
             </MenuList>
           </Menu>
       }
