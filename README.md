@@ -3,3 +3,4 @@ https://github.com/hanakannzashi/saika.git
 
 ### start
 `npm run start:testnet`
+`npm run start:mainnet`
