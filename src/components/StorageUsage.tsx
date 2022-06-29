@@ -108,7 +108,8 @@ export const StorageUsage: React.FC = () => {
   }
 
   return (
-    <Stack spacing={5}>
+    storageBalance ?
+      <Stack spacing={5}>
       <Text fontWeight={'bold'} fontSize={'lg'}>
         Storage Usage
       </Text>
@@ -152,6 +153,9 @@ export const StorageUsage: React.FC = () => {
           Clean Red Packet History
         </Button>
       </ButtonGroup>
-    </Stack>
+    </Stack> :
+      <Center fontSize={'ls'} fontWeight={'bold'}>
+        Account does not register
+      </Center>
   )
 }
