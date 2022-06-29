@@ -8,9 +8,6 @@ import {
   MenuItem,
   Text,
   Box,
-  Center,
-  Stack,
-  VStack,
 } from "@chakra-ui/react";
 import {useNearServiceStore, useWalletSignedInStore} from "../stores/global-stores";
 import {walletConfig} from "../config/wallet-config";

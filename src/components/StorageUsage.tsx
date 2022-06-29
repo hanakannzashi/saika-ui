@@ -4,15 +4,12 @@ import {StorageBalance} from "../types/storage-management";
 import {
   Stack,
   Stat,
-  Flex,
-  StatHelpText,
   StatLabel,
   StatNumber,
-  CircularProgress,
-  CircularProgressLabel, Text, Center, Progress, ProgressLabel, StatGroup, ButtonGroup, Button, Box, Container
+  Text, Center, Progress, StatGroup, ButtonGroup, Button, Box
 } from "@chakra-ui/react";
-import {formatAmount, formatYoctoAmount, parseYoctoAmount} from "../utils/amount-utils";
-import {DEFAULT_MAX_VIEW_FRAC_DIGITS, maxViewFracDigitsMapping, nearMetaData} from "../config/token-config";
+import {formatAmount, formatYoctoAmount} from "../utils/amount-utils";
+import {nearMetaData} from "../config/token-config";
 import BN from "bn.js";
 import {round} from "../utils/common-utils";
 import {BASE_RED_PACKET_CONTRACT_STORAGE_DEPOSIT} from "../config/common-config";

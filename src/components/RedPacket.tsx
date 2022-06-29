@@ -1,13 +1,18 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {
-  Box, Button, Center, Flex,
-  FormControl, FormHelperText,
-  FormLabel,
+  Box,
+  Button,
+  Center,
+  Flex,
+  FormControl,
+  FormHelperText,
   InputGroup,
   InputRightElement,
   NumberInput,
-  NumberInputField, Spacer,
-  Stack, Text
+  NumberInputField,
+  Spacer,
+  Stack,
+  Text
 } from "@chakra-ui/react";
 import {Amount, RedPacketType, TokenMetadata, YoctoAmount} from "../types/near-types";
 import {RedPacketTypeSelector} from "./RedPacketTypeSelector";
@@ -17,13 +22,14 @@ import {useTokenMetadataList} from "../hooks/useTokenMetadataList";
 import {
   DEFAULT_MAX_VIEW_FRAC_DIGITS,
   maxViewFracDigitsMapping,
-  nearMetaData, tokenIdList
+  nearMetaData,
+  tokenIdList
 } from "../config/token-config";
 import {isZeroNumUnstandard, parsePosOrZeroIntNum, parsePosOrZeroNumUnstandard} from "../utils/common-utils";
 import {
+  BASE_RED_PACKET_CONTRACT_STORAGE_DEPOSIT,
   MAX_RED_PACKET_NUM,
   RED_PACKET_CONTRACT_REGISTERED_FLAG_PREFIX,
-  BASE_RED_PACKET_CONTRACT_STORAGE_DEPOSIT,
   RED_PACKET_PK_PREFIX
 } from "../config/common-config";
 import {KeyPairEd25519} from "near-api-js/lib/utils";
@@ -189,12 +195,10 @@ export const RedPacket: React.FC = () => {
       return
     }
     let tokenAmountNum = Number(tokenAmount)
-    let tokenBalanceNum = Number(formatAmount(tokenBalance,
-        tokenMetadata.decimals,
-        maxViewFracDigitsMapping[tokenMetadata.id] ?? DEFAULT_MAX_VIEW_FRAC_DIGITS
+    let limitAmount = Number(formatAmount(tokenBalance,
+      tokenMetadata.decimals,
+      maxViewFracDigitsMapping[tokenMetadata.id] ?? DEFAULT_MAX_VIEW_FRAC_DIGITS
     ))
-    let limitAmount = tokenMetadata.id === 'NEAR' ? tokenBalanceNum - 1 : tokenBalanceNum
-    limitAmount = limitAmount > 0 ? limitAmount : 0
     if (tokenAmountNum > limitAmount) {
       tokenAmount = limitAmount.toString()
     }
