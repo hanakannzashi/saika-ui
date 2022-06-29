@@ -14,7 +14,7 @@ export const Home: React.FC = () => {
           Get Started
         </Button>
       </Link>
-      <Image src={saikaIcon} boxSize={'md'}/>
+      <Image src={saikaIcon} boxSize={'sm'}/>
     </VStack>
   )
 }

@@ -14,6 +14,7 @@ import {LinkdropPage} from "./pages/LinkdropPage";
 import {ClaimPage} from "./pages/ClaimPage";
 import {Home} from "./pages/Home";
 import {AccountPage} from "./pages/AccountPage";
+import {Interceptor} from "./components/Interceptor";
 
 
 export const App = () => (
@@ -22,10 +23,10 @@ export const App = () => (
       <Routes>
         <Route path="/" element={<Root />}>
           <Route path="" element={<Navigate to="home" />} />
-          <Route path="account" element={<AccountPage/>} />
           <Route path="home" element={<Home />} />
           <Route path="linkdrop" element={<LinkdropPage />} />
           <Route path="claim/:base64Params" element={<ClaimPage />} />
+          <Route path="account" element={<Interceptor redirect={'/linkdrop'} children={<AccountPage/>}/>} />
         </Route>
       </Routes>
     </Router>
