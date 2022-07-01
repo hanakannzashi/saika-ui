@@ -110,50 +110,54 @@ export const StorageUsage: React.FC = () => {
   return (
     storageBalance ?
       <Stack spacing={5}>
-      <Text fontWeight={'bold'} fontSize={'lg'}>
-        Storage Usage
-      </Text>
-      <Box>
-        <StatGroup>
-          <Stat>
-            <StatLabel>Total</StatLabel>
-            <StatNumber>
-              {total + ' Ⓝ'}
-            </StatNumber>
-          </Stat>
-          <Stat>
-            <StatLabel>Used</StatLabel>
-            <StatNumber>
-              {used + ' Ⓝ'}
-            </StatNumber>
-          </Stat>
-        </StatGroup>
-        <Progress marginTop={1} value={usedPecent} colorScheme={circularProgressColor} size={'lg'} hasStripe={true}/>
-      </Box>
-      <Center>
-        <Text fontSize={'xs'} fontWeight={'bold'} hidden={!usedPecent || usedPecent < 90}>
-          ⚠️ Storage is almost full, please deposit balance or clean histoty ⚠️
+        <Text fontWeight={'bold'} fontSize={'lg'}>
+          Storage Usage
         </Text>
-      </Center>
-      <ButtonGroup size={'sm'} gap={2}>
-        <Button
-          width={220}
-          colorScheme={'green'}
-          isLoading={depositButtonLoading}
-          loadingText={'Connecting Wallet'}
-          onClick={handleDepositStorageBalance}>
-          Deposit storage balance
-        </Button>
-        <Button
-          width={220}
-          colorScheme={'orange'}
-          isLoading={cleanButtonLoading}
-          loadingText={'Cleaning'}
-          onClick={handleCleanRedPacketHistory}>
-          Clean Red Packet History
-        </Button>
-      </ButtonGroup>
-    </Stack> :
+        <Box>
+          <StatGroup>
+            <Stat>
+              <StatLabel>Total</StatLabel>
+              <StatNumber>
+                {total + ' Ⓝ'}
+              </StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel>Used</StatLabel>
+              <StatNumber>
+                {used + ' Ⓝ'}
+              </StatNumber>
+            </Stat>
+          </StatGroup>
+          <Progress
+            marginTop={1}
+            value={usedPecent}
+            colorScheme={circularProgressColor}
+            size={'lg'}
+            hasStripe={true}
+          />
+        </Box>
+        <Center>
+          <Text fontSize={'xs'} fontWeight={'bold'} hidden={!usedPecent || usedPecent < 90}>
+            ⚠️ Storage is almost full, please deposit balance or clean histoty ⚠️
+          </Text>
+        </Center>
+        <ButtonGroup size={'xs'} gap={2} width={350}>
+          <Button
+            colorScheme={'purple'}
+            isLoading={depositButtonLoading}
+            loadingText={'Connecting Wallet'}
+            onClick={handleDepositStorageBalance}>
+            Deposit storage balance
+          </Button>
+          <Button
+            colorScheme={'pink'}
+            isLoading={cleanButtonLoading}
+            loadingText={'Cleaning'}
+            onClick={handleCleanRedPacketHistory}>
+            Clean Red Packet History
+          </Button>
+        </ButtonGroup>
+      </Stack> :
       <Center fontSize={'ls'} fontWeight={'bold'}>
         Account does not register
       </Center>

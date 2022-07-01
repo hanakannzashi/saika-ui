@@ -255,16 +255,16 @@ export const RedPacket: React.FC = () => {
 
   return (
     <Box>
-      <Center fontWeight={'bold'} marginBottom={7}>
-        🎉 Create Red Packet and share with your friends 🎉
+      <Center fontWeight={'bold'} fontSize={'sm'} marginBottom={7}>
+        Create Red Packet & share with your friends
       </Center>
-      <Stack spacing={5} marginInline={10}>
+      <Stack spacing={5} marginInline={2}>
         <FormControl isDisabled={!isSignedIn || !isRedPacketContractRegistered}>
           <NumberInput value={redPacketNum} onChange={handleSaveRedPacketNum}>
             <InputGroup>
               <NumberInputField
                 placeholder={'Red Packet Number'}
-                _placeholderShown={{fontSize: 'sm'}}
+                _placeholderShown={{fontSize: 'xs'}}
                 shadow={'base'}
                 ref={redPacketTypeSelectorFinalFocusRef}
               />
@@ -289,7 +289,7 @@ export const RedPacket: React.FC = () => {
             <InputGroup>
               <NumberInputField
                 placeholder={'Total Amount'}
-                _placeholderShown={{fontSize: 'sm'}}
+                _placeholderShown={{fontSize: 'xs'}}
                 shadow={'base'}
                 ref={tokenSelectorFinalFocusRef}
               />

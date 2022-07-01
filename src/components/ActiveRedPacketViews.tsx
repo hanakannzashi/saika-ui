@@ -7,8 +7,8 @@ import {
   SimpleGrid,
   Text,
   Tooltip,
-  Stack,
-  Button, Center, Badge, Spacer
+  Stack, PopoverTrigger,
+  Button, Center, Badge, Spacer, ButtonGroup, Popover, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverBody
 } from "@chakra-ui/react";
 import {useNearServiceStore, useWalletSignedInStore} from "../stores/global-stores";
 import {useRedPacketViews} from "../hooks/useRedPacketViews";
@@ -190,13 +190,14 @@ export const ActiveRedPacketViews: React.FC = () => {
               return (
                 <SimpleGrid
                   key={view.public_key}
-                  columns={10}
+                  columns={12}
                   alignItems={'center'}
+                  padding={1}
                 >
-                  <GridItem colSpan={3}>
+                  <GridItem colSpan={4}>
                     <Flex gap={3} alignItems={'center'}>
                       <Tooltip label={tokenMetadata.symbol} fontSize={'xs'}>
-                        <Avatar src={customTokenIconMapping[tokenId] ?? tokenMetadata.icon ?? DEFAULT_TOKEN_ICON} size={'sm'}/>
+                        <Avatar src={customTokenIconMapping[tokenId] ?? tokenMetadata.icon ?? DEFAULT_TOKEN_ICON} size={'xs'}/>
                       </Tooltip>
                       <Text fontWeight={'bold'} fontSize={'md'}>
                         {
@@ -216,14 +217,14 @@ export const ActiveRedPacketViews: React.FC = () => {
                     >
                       <Tooltip label={view.split_mod} fontSize={'xs'}>
                         <Flex
-                          width={6}
-                          height={9}
+                          width={4}
+                          height={6}
                           borderTopRadius={2}
                           borderBottomRadius={2}
                           backgroundColor={view.split_mod === 'Average' ? '#e3514c' : '#1cbbb4'}
                           justify={'center'}
                         >
-                          <Image src={redPacketCover} width={3.5} marginBlock={1}/>
+                          <Image src={redPacketCover} width={3} marginBlock={1}/>
                         </Flex>
                       </Tooltip>
                       <Text fontWeight={'bold'}>
@@ -231,41 +232,54 @@ export const ActiveRedPacketViews: React.FC = () => {
                       </Text>
                     </Flex>
                   </GridItem>
-                  <GridItem colSpan={1}>
+                  <GridItem colSpan={3}>
                     <Badge colorScheme='green' hidden={!approveEnabled}> new </Badge>
                     <Badge colorScheme='red' hidden={copyLinkEnabled || approveEnabled}> link lost </Badge>
                   </GridItem>
-                  <GridItem colSpan={4}>
-                    <Flex gap={2}>
+                  <GridItem colSpan={3}>
+                    <Flex>
                       <Spacer/>
-                      <Button
-                        loadingText={'Connecting Wallet'}
-                        colorScheme='purple'
-                        size={'xs'}
-                        isDisabled={!approveEnabled}
-                        hidden={!approveEnabled}
-                        onClick={handleApprove}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        width={'6em'}
-                        size={'xs'}
-                        colorScheme={'teal'}
-                        onClick={handleCopyLink}
-                        isDisabled={!copyLinkEnabled}
-                      >
-                        {copyButtonsState[view.public_key]?.text ?? 'Copy Link'}
-                      </Button>
-                      <Button
-                        isLoading={refundButtonsState[view.public_key]?.isLoading ?? false}
-                        loadingText={'Refunding'}
-                        size={'xs'}
-                        colorScheme={'pink'}
-                        onClick={onRefund}
-                      >
-                        Refund
-                      </Button>
+                      <Popover>
+                        <PopoverTrigger>
+                          <Button colorScheme={'gray'} size={'xs'}>Options</Button>
+                        </PopoverTrigger>
+                        <PopoverContent width={'auto'}>
+                          <PopoverArrow />
+                          <PopoverCloseButton />
+                          <PopoverBody>
+                            <ButtonGroup>
+                              <Button
+                                loadingText={'Connecting Wallet'}
+                                colorScheme='purple'
+                                size={'xs'}
+                                isDisabled={!approveEnabled}
+                                hidden={!approveEnabled}
+                                onClick={handleApprove}
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                width={'6em'}
+                                size={'xs'}
+                                colorScheme={'teal'}
+                                onClick={handleCopyLink}
+                                isDisabled={!copyLinkEnabled}
+                              >
+                                {copyButtonsState[view.public_key]?.text ?? 'Copy Link'}
+                              </Button>
+                              <Button
+                                isLoading={refundButtonsState[view.public_key]?.isLoading ?? false}
+                                loadingText={'Refunding'}
+                                size={'xs'}
+                                colorScheme={'pink'}
+                                onClick={onRefund}
+                              >
+                                Refund
+                              </Button>
+                            </ButtonGroup>
+                          </PopoverBody>
+                        </PopoverContent>
+                      </Popover>
                     </Flex>
                   </GridItem>
                 </SimpleGrid>

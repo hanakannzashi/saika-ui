@@ -59,7 +59,6 @@ export const RedPacketTypeSelector: React.FC<RedPacketTypeSelectorProps> = ({
         color={'white'}
         size={'sm'}
         leftIcon={<MdArrowDropDown/>}
-        rightIcon={<Image src={redPacketCover} width={3}/>}
         backgroundColor={currentTypeColor}
         onClick={onOpen}
       >

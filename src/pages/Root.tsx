@@ -18,7 +18,7 @@ export const Root: React.FC = () => {
 
 
   return (
-    <Box backgroundImage={dappImage} minHeight={800} minWidth={600} backgroundSize={'100% 100%'}>
+    <Box backgroundImage={dappImage} backgroundSize={'cover'}>
       <Header/>
       <Outlet/>
       <Footer/>

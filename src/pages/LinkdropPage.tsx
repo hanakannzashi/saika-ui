@@ -11,26 +11,22 @@ export const LinkdropPage: React.FC = () => {
   return (
     <VStack spacing={10} minHeight={600} justify={'center'}>
       <Box
-        paddingTop={10}
-        paddingBottom={5}
-        paddingInline={5}
+        padding={5}
         backgroundColor={'whiteAlpha.800'}
         shadow={'base'}
         borderRadius={10}
-        minWidth={500}
+        minWidth={350}
       >
         <RedPacket/>
       </Box>
       {
         isSignedIn ?
           <Box
-            paddingTop={10}
-            paddingInline={10}
-            paddingBottom={5}
+            padding={5}
             backgroundColor={'whiteAlpha.800'}
             shadow={'base'}
             borderRadius={10}
-            minWidth={500}
+            minWidth={350}
           >
             <ActiveRedPacketViews/>
           </Box> :

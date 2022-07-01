@@ -44,10 +44,11 @@ export const Login: React.FC = () => {
           <Button
             borderRadius={50}
             fontWeight={'bold'}
-            fontSize={'sm'}
+            fontSize={'xs'}
             color={'gray'}
             backgroundColor={'whiteAlpha.800'}
             onClick={signIn}
+            size={'sm'}
           >
             Sign in with NEAR
           </Button> :
@@ -56,11 +57,12 @@ export const Login: React.FC = () => {
               as={Button}
               borderRadius={50}
               backgroundColor={'whiteAlpha.800'}
+              size={'sm'}
               leftIcon={
                 <Avatar
-                  marginLeft={-5}
+                  marginLeft={-3}
                   src={accountIcon}
-                  size={'md'}
+                  size={'sm'}
                   padding={'0.5em'}
                   backgroundColor={'whiteAlpha.400'}
                 />
@@ -68,7 +70,7 @@ export const Login: React.FC = () => {
             >
               <Text
                 fontWeight={'bold'}
-                fontSize={'sm'}
+                fontSize={'xs'}
                 color={'gray'}
                 maxWidth={150}
                 overflow={'hidden'}

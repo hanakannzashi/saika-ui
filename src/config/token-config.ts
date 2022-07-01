@@ -5,7 +5,7 @@ import wnearIcon from "../assets/wnear-icon.png";
 import wethIcon from "../assets/weth-icon.png";
 
 export const DEFAULT_TOKEN_ICON = defaultTokenIcon
-export const DEFAULT_MAX_VIEW_FRAC_DIGITS = 5
+export const DEFAULT_MAX_VIEW_FRAC_DIGITS = 4
 
 export const nearMetaData = {
   id: 'NEAR',

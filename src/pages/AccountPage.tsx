@@ -10,7 +10,6 @@ export const AccountPage: React.FC = () => {
         backgroundColor={'whiteAlpha.800'}
         shadow={'base'}
         borderRadius={10}
-        minWidth={500}
       >
         <StorageUsage/>
       </Box>

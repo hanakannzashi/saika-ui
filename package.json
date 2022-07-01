@@ -31,7 +31,9 @@
   },
   "scripts": {
     "start:testnet": "REACT_APP_NETWORK_ID=testnet react-scripts start",
-    "start:mainnet": "REACT_APP_NETWORK_ID=mainnet react-scripts start"
+    "start:mainnet": "REACT_APP_NETWORK_ID=mainnet react-scripts start",
+    "build:testnet": "REACT_APP_NETWORK_ID=testnet react-scripts build",
+    "build:mainnet": "REACT_APP_NETWORK_ID=mainnet react-scripts build"
   },
   "eslintConfig": {
     "extends": "react-app"

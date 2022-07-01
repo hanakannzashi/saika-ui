@@ -1,4 +1,4 @@
-import {useNearServiceStore, useWalletSignedInStore} from "../stores/global-stores";
+import {useNearServiceStore} from "../stores/global-stores";
 import {useCallback, useEffect, useState} from "react";
 import {RedPacketView} from "../near/red-packet-contract";
 
