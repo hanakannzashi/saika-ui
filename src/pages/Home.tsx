@@ -5,8 +5,8 @@ import {Link} from "react-router-dom";
 
 export const Home: React.FC = () => {
   return (
-    <VStack minHeight={600} gap={7} marginTop={10}>
-      <Text fontSize={'xx-large'} fontWeight={'bold'}>
+    <VStack minHeight={650} gap={7} marginTop={10}>
+      <Text marginInline={10} fontSize={'x-large'} fontWeight={'bold'}>
         Create Red Packet & Share with your friends
       </Text>
       <Link to={'/linkdrop'}>

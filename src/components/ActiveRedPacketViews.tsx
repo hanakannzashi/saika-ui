@@ -241,11 +241,17 @@ export const ActiveRedPacketViews: React.FC = () => {
                       <Spacer/>
                       <Popover>
                         <PopoverTrigger>
-                          <Button colorScheme={'gray'} size={'xs'}>Options</Button>
+                          <Button
+                            colorScheme={approveEnabled ? "purple" : copyLinkEnabled ? 'teal' : 'pink'}
+                            size={'xs'}
+                          >
+                            {
+                              approveEnabled ? "Approve" : copyLinkEnabled ? 'Copy Link' : 'Refund'
+                            }
+                          </Button>
                         </PopoverTrigger>
                         <PopoverContent width={'auto'}>
                           <PopoverArrow />
-                          <PopoverCloseButton />
                           <PopoverBody>
                             <ButtonGroup>
                               <Button
@@ -264,6 +270,7 @@ export const ActiveRedPacketViews: React.FC = () => {
                                 colorScheme={'teal'}
                                 onClick={handleCopyLink}
                                 isDisabled={!copyLinkEnabled}
+                                hidden={!copyLinkEnabled}
                               >
                                 {copyButtonsState[view.public_key]?.text ?? 'Copy Link'}
                               </Button>

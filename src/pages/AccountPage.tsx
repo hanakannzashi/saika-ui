@@ -4,7 +4,7 @@ import {StorageUsage} from "../components/StorageUsage";
 
 export const AccountPage: React.FC = () => {
   return (
-    <VStack minHeight={600} justify={'center'}>
+    <VStack minHeight={650} justify={'center'}>
       <Box
         padding={5}
         backgroundColor={'whiteAlpha.800'}

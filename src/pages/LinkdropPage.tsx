@@ -9,7 +9,7 @@ export const LinkdropPage: React.FC = () => {
   const {isSignedIn} = useWalletSignedInStore()
 
   return (
-    <VStack spacing={10} minHeight={600} justify={'center'}>
+    <VStack spacing={10} minHeight={650} justify={'center'}>
       <Box
         padding={5}
         backgroundColor={'whiteAlpha.800'}
