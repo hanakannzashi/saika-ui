@@ -20,7 +20,7 @@ import {
   maxViewFracDigitsMapping,
   tokenIdList
 } from "../config/token-config";
-import {formatAmount} from "../utils/amount-utils";
+import {formatAmount, parseYoctoAmount} from "../utils/amount-utils";
 import redPacketCover from "../assets/redpacket-cover.png";
 import {tGas} from "../utils/custom-utils";
 import {redPacketContractConfig} from "../config/contract-config";
@@ -137,7 +137,8 @@ export const ActiveRedPacketViews: React.FC = () => {
                 await nearService!.wallet.account().addKey(
                   view.public_key,
                   redPacketContractConfig.contractId,
-                  ['claim_red_packet']
+                  ['claim_red_packet'],
+                  parseYoctoAmount('0.2')
                 )
               }
 
