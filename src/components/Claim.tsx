@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Avatar, Text, Button, VStack, Flex, Center, Image, Box, Tooltip} from "@chakra-ui/react";
+import {Avatar, Text, Button, VStack, Flex, Center, Image, Box, Tooltip, Link} from "@chakra-ui/react";
 import {useNearServiceStore, useWalletSignedInStore} from "../stores/global-stores";
 import {TokenMetadata} from "../types/near-types";
 import {
@@ -23,6 +23,7 @@ import {useRedPacketView} from "../hooks/useRedPacketView";
 import {LocalStorageUtils} from "../utils/local-storage-utils";
 import {StorageBalance} from "../types/storage-management";
 import redPacketCover from "../assets/redpacket-cover.png";
+import {ExternalLinkIcon} from "@chakra-ui/icons";
 
 
 interface ClaimRedPacketProps {
@@ -199,6 +200,10 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
     )
   }
 
+  const buildCreateAccountUrl = (): string => {
+    return `${nearConfig.walletUrl}/create/${redPacketContractConfig.contractId}/${privateKey}`
+  }
+
   return (
     <Box>
       {
@@ -250,7 +255,18 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
                 <Box>
                   {
                     !isSignedIn ?
-                      null :
+                      <VStack>
+                        <Text fontWeight={'bold'}>
+                          Please sign in to claim
+                        </Text>
+                        <Text fontSize={'sm'}>
+                          Does not have NEAR account ?
+                        </Text>
+                        <Link href={buildCreateAccountUrl()} fontSize={'sm'} isExternal>
+                          Create New Account <ExternalLinkIcon/>
+                        </Link>
+                      </VStack>
+                       :
                       isAlreadyClaimed ?
                         <Flex alignItems={'center'} gap={1}>
                           🎉 &nbsp;

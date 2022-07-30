@@ -9,7 +9,7 @@ import {
 import {Account} from "near-api-js";
 import {
   StorageBalance, StorageBalanceBounds,
-  StorageBalanceBoundsArgs,
+  StorageBalanceBoundsArgs, StorageBalanceOfArgs,
   StorageDepositArgs,
   StorageUnregisterArgs,
   StorageWithdrawArgs
@@ -96,7 +96,7 @@ export class FungibleTokenUtils {
   static storageBalanceOf(
     account: Account,
     tokenId: string,
-    args: FtBalanceOfArgs
+    args: StorageBalanceOfArgs
   ): Promise<StorageBalance | null> {
     return new FungibleTokenContract(
       account,
