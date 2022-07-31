@@ -24,6 +24,7 @@ import {LocalStorageUtils} from "../utils/local-storage-utils";
 import {StorageBalance} from "../types/storage-management";
 import redPacketCover from "../assets/redpacket-cover.png";
 import {ExternalLinkIcon} from "@chakra-ui/icons";
+import {walletConfig} from "../config/wallet-config";
 
 
 interface ClaimRedPacketProps {
@@ -47,6 +48,10 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
   const [tokenMetadata, setTokenMetadata] = useState<TokenMetadata | null>(null)
 
   const [isClaimOrRegisterButtonLoading, setIsClaimOrRegisterButtonLoading] = useState<boolean>(false)
+
+  const [createFlag, setCreateFlag] = useState<boolean>(LocalStorageUtils.getValue<boolean>('createFlag') ?? true)
+
+  console.log(createFlag)
 
   const isUnSupportedToken = useMemo(() => {
     if (!nearService || !view) {
@@ -256,17 +261,27 @@ export const ClaimRedPacket: React.FC<ClaimRedPacketProps> = (
                   {
                     !isSignedIn ?
                       <VStack>
-                        <Text fontWeight={'bold'}>
-                          Please sign in to claim
-                        </Text>
-                        <Text fontSize={'sm'}>
-                          Does not have NEAR account ?
-                        </Text>
-                        <Link href={buildCreateAccountUrl()} fontSize={'sm'} isExternal>
-                          Create New Account <ExternalLinkIcon/>
-                        </Link>
+                        <Text fontWeight={'bold'} onClick={() => {
+                            nearService!.wallet.requestSignIn(walletConfig.signInOptions)
+                          }} textDecoration={'underline'} cursor="pointer">
+                            Sign in and claim
+                          </Text>
+                        {
+                          createFlag ?
+                            <VStack>
+                              <Text fontSize={'sm'}>
+                                Does not have NEAR account ?
+                              </Text>
+                              <Link href={buildCreateAccountUrl()} fontSize={'sm'} isExternal onClick={() => {
+                                LocalStorageUtils.setValue('createFlag', false)
+                                setCreateFlag(false)
+                              }} textDecoration={'underline'}>
+                                Create new account and claim <ExternalLinkIcon/>
+                              </Link>
+                            </VStack> : null
+                        }
                       </VStack>
-                       :
+                      :
                       isAlreadyClaimed ?
                         <Flex alignItems={'center'} gap={1}>
                           🎉 &nbsp;
