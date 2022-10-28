@@ -25,7 +25,6 @@ function getTokenIdList() {
       return [
         'NEAR',
         'wrap.near',
-        'usn',
         'f5cfbc74057c610c8ef151a439252680ac68c6dc.factory.bridge.near',
         'aaaaaa20d9e0e2461697782ef11675f668207961.factory.bridge.near',
         'token.v2.ref-finance.near',
@@ -45,7 +44,6 @@ function getTokenIdList() {
       return [
         'NEAR',
         'wrap.testnet',
-        'usdn.testnet',
         'oct.fakes.testnet',
         'aurora.fakes.testnet',
         'ref.fakes.testnet',
